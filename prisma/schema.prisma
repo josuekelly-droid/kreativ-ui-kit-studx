@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  email     String   @unique
-  name      String?
+  id               String   @id
+  email            String   @unique
+  name             String?
   isPremium        Boolean  @default(false)
   premiumExpiresAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  themes    Theme[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  themes           Theme[]
 }
 
 model Theme {
