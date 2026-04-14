@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
+  const { id } = await params;
   
   if (!userId) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -16,7 +17,7 @@ export async function GET(
 
   try {
     const theme = await prisma.theme.findFirst({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
     
     if (!theme) {
@@ -31,10 +32,11 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
+  const { id } = await params;
   
   if (!userId) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -45,7 +47,7 @@ export async function PUT(
     const { name, primaryColor, secondaryColor, accentColor, borderRadius, darkMode, spacing, fontSize } = body;
 
     await prisma.theme.updateMany({
-      where: { id: params.id, userId },
+      where: { id, userId },
       data: { name, primaryColor, secondaryColor, accentColor, borderRadius, darkMode, spacing, fontSize },
     });
     
@@ -57,10 +59,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
+  const { id } = await params;
   
   if (!userId) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -68,7 +71,7 @@ export async function DELETE(
 
   try {
     await prisma.theme.deleteMany({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
     
     return NextResponse.json({ success: true });

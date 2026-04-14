@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -23,7 +23,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { userId } = await auth();
   
   if (!userId) {
@@ -34,7 +34,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, primaryColor, secondaryColor, accentColor, borderRadius, darkMode, spacing, fontSize } = body;
 
-    // Vérifie si l'utilisateur existe déjà
     let user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       user = await prisma.user.create({
