@@ -60,7 +60,26 @@ export default function Footer() {
 
         <div className="border-t mt-8 pt-8 text-center text-sm text-gray-500">
           <p>© {currentYear} Kreativ UI Kit Pro. Tous droits réservés.</p>
-          <p className="mt-2">Créé avec ❤️ pour les designers et développeurs du monde entier</p>
+          <p className="mt-2">
+            Créé par{" "}
+            <a 
+              href="https://www.linkedin.com/in/kellyjosueakplogan" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-purple-600 transition"
+            >
+              Kelly Josué AKPLOGAN
+            </a>
+            {" • "}
+            <a 
+              href="https://kreativ-ux.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-purple-600 transition"
+            >
+              Agence Kreativ UX
+            </a>
+          </p>
         </div>
       </div>
     </footer>
