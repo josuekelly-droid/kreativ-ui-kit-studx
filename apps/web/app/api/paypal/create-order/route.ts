@@ -1,16 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-const PAYPAL_API = "https://api-m.sandbox.paypal.com";
+const PAYPAL_API = "https://api-m.paypal.com";
 
 async function getAccessToken() {
-  const authString = `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`;
-  const base64Auth = Buffer.from(authString).toString("base64");
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!;
+  const secret = process.env.PAYPAL_SECRET!;
+  const authString = Buffer.from(`${clientId}:${secret}`).toString("base64");
 
   const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${base64Auth}`,
+      Authorization: `Basic ${authString}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: "grant_type=client_credentials",
@@ -20,7 +21,7 @@ async function getAccessToken() {
   return data.access_token;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -50,16 +51,22 @@ export async function POST(request: Request) {
           },
         ],
         application_context: {
-          return_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+          return_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/paypal/capture-order?plan=${plan}`,
           cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
         },
       }),
     });
 
     const order = await response.json();
+
+    if (!order.id) {
+      console.error("PayPal error:", order);
+      return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
+    }
+
     return NextResponse.json({ id: order.id });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Erreur lors de la création de la commande" }, { status: 500 });
+    console.error("Create order error:", error);
+    return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
   }
 }

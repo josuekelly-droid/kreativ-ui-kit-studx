@@ -3,16 +3,17 @@ import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-const PAYPAL_API = "https://api-m.sandbox.paypal.com";
+const PAYPAL_API = "https://api-m.paypal.com"; // ← LIVE
 
 async function getAccessToken() {
-  const authString = `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`;
-  const base64Auth = Buffer.from(authString).toString("base64");
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!;
+  const secret = process.env.PAYPAL_SECRET!;
+  const authString = Buffer.from(`${clientId}:${secret}`).toString("base64");
 
   const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${base64Auth}`,
+      Authorization: `Basic ${authString}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: "grant_type=client_credentials",
@@ -44,7 +45,6 @@ export async function POST(request: Request) {
     const capture = await response.json();
 
     if (capture.status === "COMPLETED") {
-      // Mettre à jour l'utilisateur dans la base de données
       const expiresAt = new Date();
       if (plan === "monthly") {
         expiresAt.setMonth(expiresAt.getMonth() + 1);
