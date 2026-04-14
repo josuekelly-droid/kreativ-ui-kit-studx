@@ -1,0 +1,4 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Sitemap: https://kreativ-ui-kit-studx.vercel.app/sitemap.xml
