@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  name      String?
+  isPremium        Boolean  @default(false)
+  premiumExpiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  themes    Theme[]
+}
+
+model Theme {
+  id             String   @id @default(cuid())
+  name           String
+  primaryColor   String   @default("#8b5cf6")
+  secondaryColor String   @default("#ec4899")
+  accentColor    String   @default("#10b981")
+  borderRadius   Int      @default(20)
+  darkMode       Boolean  @default(false)
+  spacing        Int      @default(4)
+  fontSize       Int      @default(16)
+  isPublic       Boolean  @default(false)
+  userId         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

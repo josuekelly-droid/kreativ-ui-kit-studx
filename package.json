@@ -20,5 +20,12 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@clerk/nextjs": "^7.1.0",
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^6.19.3",
+    "dotenv": "^17.4.2",
+    "prisma": "^6.19.3"
+  }
 }
