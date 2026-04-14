@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import AIGenerator from '../../components/AIGenerator';
 
 interface Theme {
   id: string;
@@ -177,6 +178,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <AIGenerator />
     </div>
   );
 }
