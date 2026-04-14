@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import * as Icons from 'lucide-react';
 import { UserButton, useUser } from "@clerk/nextjs";
+import { usePremium } from "../hooks/usePremium";
+import Link from "next/link";
 
 // ============================================================
 // COMPOSANTS EXTERNES
@@ -69,8 +71,34 @@ export default function ThemeBuilder() {
   const [searchIcon, setSearchIcon] = useState('');
 
   const { isSignedIn, user } = useUser();
+  const { isPremium, loading: premiumLoading } = usePremium();
 
-    // Sauvegarde du thème dans la base de données
+  // ========== LISTES POUR RESTRICTIONS PREMIUM ==========
+  const ALL_FORMS = [
+    'login', 'register', 'contact', 'newsletter', 'feedback', 'checkout', 'search', 'appointment',
+    'survey', 'forgotPassword', 'upload', 'profile', 'settings', 'billing', 'shipping', 'review',
+    'comment', 'support', 'booking', 'rsvp', 'poll', 'quiz', 'application', 'order', 'refund',
+    'warranty', 'claim', 'donation', 'petition', 'invitation', 'registration', 'verification',
+    'confirmation', 'cancellation', 'reschedule', 'report', 'complaint', 'suggestion', 'evaluation',
+    'assessment', 'test', 'exam'
+  ];
+  const FREE_FORMS = ALL_FORMS.slice(0, 5);
+  const displayForms = isPremium ? ALL_FORMS : FREE_FORMS;
+
+  const ALL_SECTIONS = [
+    'hero', 'heroSplit', 'heroVideo', 'heroImage', 'features', 'featuresGrid', 'featuresList',
+    'featuresIcons', 'testimonials', 'testimonialsGrid', 'pricing', 'pricingToggle', 'pricingComparison',
+    'contact', 'contactMap', 'contactForm', 'footer', 'footerSimple', 'footerColumns', 'footerNewsletter',
+    'stats', 'statsWithIcons', 'statsWithProgress', 'cta', 'ctaCenter', 'ctaSplit', 'ctaBackground',
+    'blog', 'blogGrid', 'blogList', 'blogFeatured', 'team', 'teamGrid', 'teamList', 'teamCarousel',
+    'gallery', 'galleryGrid', 'galleryMasonry', 'gallerySlider', 'faq', 'faqAccordion', 'faqGrid',
+    'newsletterSection', 'logoCloud', 'logoCloudSlider', 'security', 'trust', 'partners', 'awards',
+    'recognition', 'tabs', 'accordion', 'timeline'
+  ];
+  const FREE_SECTIONS = ALL_SECTIONS.slice(0, 5);
+  const displaySections = isPremium ? ALL_SECTIONS : FREE_SECTIONS;
+
+  // Sauvegarde du thème dans la base de données
   const saveThemeToCloud = async () => {
     if (!isSignedIn) {
       alert("Veuillez vous connecter pour sauvegarder vos thèmes dans le cloud.");
@@ -95,7 +123,7 @@ export default function ThemeBuilder() {
 
       if (response.ok) {
         alert("✅ Thème sauvegardé dans le cloud !");
-        loadUserThemes(); // Recharge la liste des thèmes
+        loadUserThemes();
       } else {
         alert("❌ Erreur lors de la sauvegarde");
       }
@@ -206,6 +234,7 @@ export default function ThemeBuilder() {
     URL.revokeObjectURL(url);
     setShowExportModal(false);
   };
+  
   const downloadCode = (type: string, name: string, format: string, content: string) => {
     let finalContent = '', extension = '';
     if (format === 'html') {
@@ -250,15 +279,6 @@ export default function ThemeBuilder() {
   // ============================================================
   // 2. FORMULAIRES (40+)
   // ============================================================
-  const FORM_TYPES = [
-    'login', 'register', 'contact', 'newsletter', 'feedback', 'checkout', 'search', 'appointment',
-    'survey', 'forgotPassword', 'upload', 'profile', 'settings', 'billing', 'shipping', 'review',
-    'comment', 'support', 'booking', 'rsvp', 'poll', 'quiz', 'application', 'order', 'refund',
-    'warranty', 'claim', 'donation', 'petition', 'invitation', 'registration', 'verification',
-    'confirmation', 'cancellation', 'reschedule', 'report', 'complaint', 'suggestion', 'evaluation',
-    'assessment', 'test', 'exam'
-  ];
-
   const getFormHTML = (type: string): string => {
     const baseInputStyle = `width:100%; padding:14px 18px; margin-bottom:16px; border:2px solid ${primaryColor}30; border-radius:${borderRadius}px; background:${darkMode ? '#1a1a1a' : '#ffffff'}; color:${textColor}; font-size:16px; transition:all 0.3s ease; outline:none`;
     const baseButtonStyle = `width:100%; padding:14px; background:linear-gradient(135deg, ${primaryColor}, ${secondaryColor}); border:none; border-radius:${borderRadius}px; color:white; font-weight:bold; font-size:16px; cursor:pointer; transition:all 0.3s ease`;
@@ -316,9 +336,18 @@ export default function ThemeBuilder() {
       <div className="relative overflow-hidden rounded-2xl p-8 transition-all duration-500" style={{ background: `${surfaceColor}`, backdropFilter: 'blur(10px)', borderRadius: `${borderRadius}px` }}>
         <div dangerouslySetInnerHTML={{ __html: content }} />
         <div className="flex gap-3 justify-center mt-6 pt-4 border-t" style={{ borderTopColor: `${primaryColor}20` }}>
-          <button onClick={() => downloadCode('form', formType, 'html', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
-          <button onClick={() => downloadCode('form', formType, 'react', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
-          <button onClick={() => downloadCode('form', formType, 'tailwind', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+          {isPremium ? (
+            <>
+              <button onClick={() => downloadCode('form', formType, 'html', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
+              <button onClick={() => downloadCode('form', formType, 'react', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
+              <button onClick={() => downloadCode('form', formType, 'tailwind', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+            </>
+          ) : (
+            <div className="text-center w-full">
+              <p className="text-sm text-yellow-600">🔒 Téléchargements réservés aux utilisateurs Premium</p>
+              <Link href="/pricing" className="text-xs text-purple-600 underline">Passer Premium</Link>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -327,17 +356,6 @@ export default function ThemeBuilder() {
   // ============================================================
   // 3. SECTIONS (50+)
   // ============================================================
-  const SECTION_TYPES = [
-    'hero', 'heroSplit', 'heroVideo', 'heroImage', 'features', 'featuresGrid', 'featuresList',
-    'featuresIcons', 'testimonials', 'testimonialsGrid', 'pricing', 'pricingToggle', 'pricingComparison',
-    'contact', 'contactMap', 'contactForm', 'footer', 'footerSimple', 'footerColumns', 'footerNewsletter',
-    'stats', 'statsWithIcons', 'statsWithProgress', 'cta', 'ctaCenter', 'ctaSplit', 'ctaBackground',
-    'blog', 'blogGrid', 'blogList', 'blogFeatured', 'team', 'teamGrid', 'teamList', 'teamCarousel',
-    'gallery', 'galleryGrid', 'galleryMasonry', 'gallerySlider', 'faq', 'faqAccordion', 'faqGrid',
-    'newsletterSection', 'logoCloud', 'logoCloudSlider', 'security', 'trust', 'partners', 'awards',
-    'recognition', 'tabs', 'accordion', 'timeline'
-  ];
-
   const getSectionHTML = (type: string): string => {
     const gradientBg = `linear-gradient(135deg, ${primaryColor}15, ${secondaryColor}15)`;
     switch(type) {
@@ -353,7 +371,7 @@ export default function ThemeBuilder() {
       case 'testimonialsGrid': return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;padding:60px 20px;background:${gradientBg}">${[1,2,3,4].map(i => `<div style="padding:32px;background:${surfaceColor};border-radius:${borderRadius}px"><div style="color:${primaryColor};margin-bottom:12px">★★★★★</div><p>Témoignage ${i}</p><p style="margin-top:16px;font-weight:bold">- Client ${i}</p></div>`).join('')}</div>`;
       case 'pricing': return `<div style="padding:80px 20px;text-align:center;background:${gradientBg}"><h2 style="font-size:36px;font-weight:bold;margin-bottom:16px">Tarifs</h2><p style="margin-bottom:48px;opacity:0.7">Choisissez le plan qui vous convient</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;max-width:1200px;margin:0 auto">${['Basic','Pro','Enterprise'].map((plan,i) => `<div style="padding:40px;background:${surfaceColor};border-radius:${borderRadius}px;box-shadow:0 20px 40px rgba(0,0,0,0.1);text-align:center;${i===1 ? `transform:scale(1.05);border:2px solid ${primaryColor}` : ''}"><div style="font-size:48px;margin-bottom:20px">${i===0?'⭐':i===1?'💎':'🏢'}</div><h3 style="font-size:28px;font-weight:bold;margin-bottom:16px">${plan}</h3><p style="font-size:48px;font-weight:bold;color:${primaryColor};margin-bottom:24px">${i===0?'19€':i===1?'49€':'99€'}<span style="font-size:16px">/mois</span></p><button class="btn" style="background:${primaryColor};width:100%">Choisir</button></div>`).join('')}</div></div>`;
       case 'pricingToggle': return `<div style="padding:60px 20px;text-align:center"><div style="display:flex;justify-content:center;gap:16px;margin-bottom:32px"><button style="background:${primaryColor};color:white;border:none;padding:12px 24px;border-radius:${borderRadius}px">Mensuel</button><button style="background:transparent;border:1px solid ${primaryColor};padding:12px 24px;border-radius:${borderRadius}px">Annuel</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px">${['Basic','Pro'].map(plan => `<div style="padding:32px;background:${surfaceColor};border-radius:${borderRadius}px"><h3>${plan}</h3><p style="font-size:36px;color:${primaryColor}">$29</p><button class="btn" style="background:${primaryColor};width:100%">Choisir</button></div>`).join('')}</div></div>`;
-      case 'pricingComparison': return `<div style="overflow-x:auto;padding:60px 20px"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:12px;text-align:left">Fonctionnalité</th><th style="padding:12px;text-align:center">Basic</th><th style="padding:12px;text-align:center">Pro</th><th style="padding:12px;text-align:center">Enterprise</th></tr></thead><tbody><tr><td style="padding:12px;border-top:1px solid #ddd">Support</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td></tr><tr><td style="padding:12px;border-top:1px solid #ddd">API</td><td style="padding:12px;text-align:center">✗</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td></tr></tbody></table></div>`;
+      case 'pricingComparison': return `<div style="overflow-x:auto;padding:60px 20px"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:12px;text-align:left">Fonctionnalité</th><th style="padding:12px;text-align:center">Basic</th><th style="padding:12px;text-align:center">Pro</th><th style="padding:12px;text-align:center">Enterprise</th></tr></thead><tbody><tr><td style="padding:12px;border-top:1px solid #ddd">Support</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td></tr><td><td style="padding:12px;border-top:1px solid #ddd">API</td><td style="padding:12px;text-align:center">✗</td><td style="padding:12px;text-align:center">✓</td><td style="padding:12px;text-align:center">✓</td></tr></tbody></table></div>`;
       case 'contact': return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;padding:80px 20px"><div><h2 style="font-size:32px;font-weight:bold;margin-bottom:20px">Contactez-nous</h2><p style="margin-bottom:12px">Email: contact@kreativ.com</p><p>Tél: +33 1 23 45 67 89</p></div><div><input type="text" placeholder="Nom" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"><input type="email" placeholder="Email" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"><textarea rows="4" placeholder="Message" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"></textarea><button class="btn" style="background:${primaryColor};width:100%">Envoyer</button></div></div>`;
       case 'contactMap': return `<div style="padding:60px 20px"><div style="background:${primaryColor}20;border-radius:${borderRadius}px;padding:100px;text-align:center"><span style="font-size:64px">📍</span><p>Carte interactive</p></div></div>`;
       case 'contactForm': return `<div style="max-width:500px;margin:0 auto;padding:60px 20px"><h2 style="text-align:center;margin-bottom:32px">Contact</h2><input type="text" placeholder="Nom" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"><input type="email" placeholder="Email" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"><textarea rows="4" placeholder="Message" style="width:100%;padding:14px;margin-bottom:16px;border:2px solid ${primaryColor}30;border-radius:${borderRadius}px"></textarea><button class="btn" style="background:${primaryColor};width:100%">Envoyer</button></div>`;
@@ -404,9 +422,18 @@ export default function ThemeBuilder() {
       <div className="relative overflow-hidden rounded-2xl transition-all duration-500" style={{ borderRadius: `${borderRadius}px` }}>
         <div dangerouslySetInnerHTML={{ __html: content }} />
         <div className="flex gap-3 justify-center mt-6 pt-4 border-t" style={{ borderTopColor: `${primaryColor}20`, marginTop: '20px', paddingTop: '20px' }}>
-          <button onClick={() => downloadCode('section', templateType, 'html', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
-          <button onClick={() => downloadCode('section', templateType, 'react', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
-          <button onClick={() => downloadCode('section', templateType, 'tailwind', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+          {isPremium ? (
+            <>
+              <button onClick={() => downloadCode('section', templateType, 'html', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
+              <button onClick={() => downloadCode('section', templateType, 'react', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
+              <button onClick={() => downloadCode('section', templateType, 'tailwind', content)} className="px-4 py-2 text-sm font-semibold rounded-xl transition-all hover:scale-105" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+            </>
+          ) : (
+            <div className="text-center w-full">
+              <p className="text-sm text-yellow-600">🔒 Téléchargements réservés aux utilisateurs Premium</p>
+              <Link href="/pricing" className="text-xs text-purple-600 underline">Passer Premium</Link>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -417,48 +444,57 @@ export default function ThemeBuilder() {
   // ============================================================
   return (
     <div className="min-h-screen transition-all duration-500" style={{ background: bgColor, color: textColor }}>
-      {/* HEADER */}
-<div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`, padding: '60px 20px', textAlign: 'center' }}>
-  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
-  <div className="relative z-10">
-    <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white">🎨 Kreativ UI Kit Pro</h1>
-    <p className="text-xl text-white/90 mb-8">{ICON_LIST.length} icônes • {FORM_TYPES.length} formulaires • {SECTION_TYPES.length} sections</p>
-    
-    <div className="flex gap-4 justify-center flex-wrap">
-      {/* Boutons existants */}
-      <button onClick={saveTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>💾 Sauvegarder</button>
-      <button onClick={loadTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📂 Charger</button>
-      <button onClick={() => setShowExportModal(true)} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📤 Exporter le thème</button>
-
-      {/* NOUVEAUX BOUTONS : Cloud - UNIQUEMENT SI CONNECTÉ */}
-      {isSignedIn && (
-        <>
-          <button onClick={saveThemeToCloud} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>
-            ☁️ Sauvegarder dans le cloud
-          </button>
-          
-          {userThemes.length > 0 && (
-            <select 
-              onChange={(e) => loadThemeFromCloud(e.target.value)} 
-              value={selectedThemeId}
-              className="px-4 py-3 rounded-xl font-semibold backdrop-blur-sm bg-white/20 text-white border border-white/30"
-              style={{ color: 'white' }}
-            >
-              <option value="">📁 Mes thèmes sauvegardés</option>
-              {userThemes.map((theme) => (
-                <option key={theme.id} value={theme.id} style={{ color: '#333' }}>
-                  {theme.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </>
+      {/* Bandeau Premium pour utilisateurs gratuits */}
+      {!isPremium && isSignedIn && (
+        <div className="bg-yellow-50 border-b border-yellow-200 py-3 px-4 text-center">
+          <p className="text-yellow-700 text-sm">
+            ⭐ Passez à l'offre Premium pour débloquer tous les téléchargements (HTML, React, Tailwind), 
+            l'accès complet aux {ALL_SECTIONS.length} sections et {ALL_FORMS.length} formulaires.
+            <Link href="/pricing" className="ml-2 underline font-semibold">Voir les offres</Link>
+          </p>
+        </div>
       )}
-    </div>
-  </div>
-</div>
 
-            {/* Bouton utilisateur */}
+      {/* HEADER */}
+      <div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`, padding: '60px 20px', textAlign: 'center' }}>
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
+        <div className="relative z-10">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white">🎨 Kreativ UI Kit Pro</h1>
+          <p className="text-xl text-white/90 mb-8">{ICON_LIST.length} icônes • {ALL_FORMS.length} formulaires • {ALL_SECTIONS.length} sections</p>
+          
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button onClick={saveTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>💾 Sauvegarder</button>
+            <button onClick={loadTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📂 Charger</button>
+            <button onClick={() => setShowExportModal(true)} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📤 Exporter le thème</button>
+
+            {isSignedIn && (
+              <>
+                <button onClick={saveThemeToCloud} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>
+                  ☁️ Sauvegarder dans le cloud
+                </button>
+                
+                {userThemes.length > 0 && (
+                  <select 
+                    onChange={(e) => loadThemeFromCloud(e.target.value)} 
+                    value={selectedThemeId}
+                    className="px-4 py-3 rounded-xl font-semibold backdrop-blur-sm bg-white/20 text-white border border-white/30"
+                    style={{ color: 'white' }}
+                  >
+                    <option value="">📁 Mes thèmes sauvegardés</option>
+                    {userThemes.map((theme) => (
+                      <option key={theme.id} value={theme.id} style={{ color: '#333' }}>
+                        {theme.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bouton utilisateur */}
       <div className="absolute top-4 right-4 z-30">
         {isSignedIn ? (
           <div className="flex items-center gap-3 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full">
@@ -474,16 +510,10 @@ export default function ThemeBuilder() {
 
       {/* NAVIGATION */}
       <div className="sticky top-0 z-20 flex gap-3 justify-center flex-wrap p-4 backdrop-blur-xl border-b" style={{ background: `${surfaceColor}cc`, borderBottomColor: `${primaryColor}30` }}>
-        {[
-          { id: 'components', label: '✨ Composants' },
-          { id: 'icons', label: `📦 Icônes (${ICON_LIST.length})` },
-          { id: 'forms', label: `📝 Formulaires (${FORM_TYPES.length})` },
-          { id: 'sections', label: `🧩 Sections (${SECTION_TYPES.length})` }
-        ].map(tab => (
-          <button key={tab.id} onClick={() => setActiveSection(tab.id)} className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" style={{ background: activeSection === tab.id ? primaryColor : 'transparent', color: activeSection === tab.id ? 'white' : textColor, border: `1px solid ${primaryColor}40` }}>
-            {tab.label}
-          </button>
-        ))}
+        <button onClick={() => setActiveSection('components')} className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" style={{ background: activeSection === 'components' ? primaryColor : 'transparent', color: activeSection === 'components' ? 'white' : textColor, border: `1px solid ${primaryColor}40` }}>✨ Composants</button>
+        <button onClick={() => setActiveSection('icons')} className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" style={{ background: activeSection === 'icons' ? primaryColor : 'transparent', color: activeSection === 'icons' ? 'white' : textColor, border: `1px solid ${primaryColor}40` }}>📦 Icônes ({ICON_LIST.length})</button>
+        <button onClick={() => setActiveSection('forms')} className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" style={{ background: activeSection === 'forms' ? primaryColor : 'transparent', color: activeSection === 'forms' ? 'white' : textColor, border: `1px solid ${primaryColor}40` }}>📝 Formulaires ({displayForms.length})</button>
+        <button onClick={() => setActiveSection('sections')} className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" style={{ background: activeSection === 'sections' ? primaryColor : 'transparent', color: activeSection === 'sections' ? 'white' : textColor, border: `1px solid ${primaryColor}40` }}>🧩 Sections ({displaySections.length})</button>
       </div>
 
       {/* CONTENU PRINCIPAL */}
@@ -512,8 +542,29 @@ export default function ThemeBuilder() {
 
             {activeSection === 'components' && (
               <div className="space-y-8">
-                <div><h3 className="font-semibold mb-3 text-lg">🔘 Bouton</h3><button className="px-8 py-3 font-bold rounded-xl transition-all hover:scale-105" style={{ background: primaryColor, borderRadius: `${borderRadius}px`, color: 'white' }}>Bouton stylisé</button><div className="flex gap-2 mt-3"><button onClick={() => downloadCode('component', 'button', 'html', '<button class="btn">Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button><button onClick={() => downloadCode('component', 'button', 'react', '<button>Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button><button onClick={() => downloadCode('component', 'button', 'tailwind', '<button class="btn">Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button></div></div>
-                <div><h3 className="font-semibold mb-3 text-lg">🃏 Carte</h3><div className="p-6 rounded-xl" style={{ border: `1px solid ${primaryColor}30`, borderRadius: `${borderRadius}px`, background: surfaceColor }}><h4 className="font-bold mb-2">Titre</h4><p className="text-sm opacity-70">Contenu de la carte</p></div><div className="flex gap-2 mt-3"><button onClick={() => downloadCode('component', 'card', 'html', '<div class="card"><h3>Titre</h3><p>Contenu</p></div>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button><button onClick={() => downloadCode('component', 'card', 'react', '<div><h3>Titre</h3><p>Contenu</p></div>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button></div></div>
+                <div><h3 className="font-semibold mb-3 text-lg">🔘 Bouton</h3><button className="px-8 py-3 font-bold rounded-xl transition-all hover:scale-105" style={{ background: primaryColor, borderRadius: `${borderRadius}px`, color: 'white' }}>Bouton stylisé</button>
+                <div className="flex gap-2 mt-3">
+                  {isPremium ? (
+                    <>
+                      <button onClick={() => downloadCode('component', 'button', 'html', '<button class="btn">Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
+                      <button onClick={() => downloadCode('component', 'button', 'react', '<button>Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
+                      <button onClick={() => downloadCode('component', 'button', 'tailwind', '<button class="btn">Bouton</button>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+                    </>
+                  ) : (
+                    <div className="text-xs text-yellow-600">🔒 Premium requis</div>
+                  )}
+                </div></div>
+                <div><h3 className="font-semibold mb-3 text-lg">🃏 Carte</h3><div className="p-6 rounded-xl" style={{ border: `1px solid ${primaryColor}30`, borderRadius: `${borderRadius}px`, background: surfaceColor }}><h4 className="font-bold mb-2">Titre</h4><p className="text-sm opacity-70">Contenu de la carte</p></div>
+                <div className="flex gap-2 mt-3">
+                  {isPremium ? (
+                    <>
+                      <button onClick={() => downloadCode('component', 'card', 'html', '<div class="card"><h3>Titre</h3><p>Contenu</p></div>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
+                      <button onClick={() => downloadCode('component', 'card', 'react', '<div><h3>Titre</h3><p>Contenu</p></div>')} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
+                    </>
+                  ) : (
+                    <div className="text-xs text-yellow-600">🔒 Premium requis</div>
+                  )}
+                </div></div>
                 <div><h3 className="font-semibold mb-3 text-lg">📱 Modal</h3><button onClick={() => setIsModalOpen(true)} className="px-8 py-3 font-bold rounded-xl transition-all hover:scale-105" style={{ background: secondaryColor, borderRadius: `${borderRadius}px`, color: 'white' }}>Ouvrir</button></div>
               </div>
             )}
@@ -523,20 +574,36 @@ export default function ThemeBuilder() {
                 <input type="text" placeholder="🔍 Rechercher..." value={searchIcon} onChange={(e) => setSearchIcon(e.target.value)} className="w-full p-3 mb-4 rounded-xl border-2 focus:outline-none transition-all" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }} />
                 <div className="mb-4"><label className="block mb-2">📏 Taille : {iconSize}px</label><input type="range" min="24" max="96" value={iconSize} onChange={(e) => setIconSize(Number(e.target.value))} className="w-full" style={{ accentColor: primaryColor }} /></div>
                 <select value={selectedIcon} onChange={(e) => setSelectedIcon(e.target.value)} className="w-full p-3 mb-6 rounded-xl border-2 focus:outline-none" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }}>{filteredIcons.map(icon => <option key={icon} value={icon}>{icon}</option>)}</select>
-                <div className="text-center p-12 rounded-2xl" style={{ background: `${primaryColor}10`, borderRadius: `${borderRadius}px` }}><IconComponent size={iconSize} color={primaryColor} /><p className="mt-4 font-mono">{selectedIcon}</p><div className="flex gap-2 justify-center mt-6"><button onClick={() => downloadCode('icon', selectedIcon, 'html', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button><button onClick={() => downloadCode('icon', selectedIcon, 'react', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button><button onClick={() => downloadCode('icon', selectedIcon, 'tailwind', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button></div><p className="text-xs mt-4 opacity-60">{filteredIcons.length} icônes disponibles</p></div>
+                <div className="text-center p-12 rounded-2xl" style={{ background: `${primaryColor}10`, borderRadius: `${borderRadius}px` }}><IconComponent size={iconSize} color={primaryColor} /><p className="mt-4 font-mono">{selectedIcon}</p>
+                <div className="flex gap-2 justify-center mt-6">
+                  {isPremium ? (
+                    <>
+                      <button onClick={() => downloadCode('icon', selectedIcon, 'html', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>📄 HTML</button>
+                      <button onClick={() => downloadCode('icon', selectedIcon, 'react', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>⚛️ React</button>
+                      <button onClick={() => downloadCode('icon', selectedIcon, 'tailwind', `<div>${selectedIcon}</div>`)} className="px-3 py-1.5 text-xs rounded-lg" style={{ background: '#6c757d', color: 'white' }}>🎨 Tailwind</button>
+                    </>
+                  ) : (
+                    <div className="text-xs text-yellow-600">🔒 Premium requis</div>
+                  )}
+                </div>
+                <p className="text-xs mt-4 opacity-60">{filteredIcons.length} icônes disponibles</p></div>
               </div>
             )}
 
             {activeSection === 'forms' && (
               <div>
-                <select value={formType} onChange={(e) => setFormType(e.target.value)} className="w-full p-3 mb-6 rounded-xl border-2 focus:outline-none" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }}>{FORM_TYPES.map(key => <option key={key} value={key}>{key}</option>)}</select>
+                <select value={formType} onChange={(e) => setFormType(e.target.value)} className="w-full p-3 mb-6 rounded-xl border-2 focus:outline-none" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }}>
+                  {displayForms.map(key => <option key={key} value={key}>{key}</option>)}
+                </select>
                 {renderForm()}
               </div>
             )}
 
             {activeSection === 'sections' && (
               <div>
-                <select value={templateType} onChange={(e) => setTemplateType(e.target.value)} className="w-full p-3 mb-6 rounded-xl border-2 focus:outline-none" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }}>{SECTION_TYPES.map(key => <option key={key} value={key}>{key}</option>)}</select>
+                <select value={templateType} onChange={(e) => setTemplateType(e.target.value)} className="w-full p-3 mb-6 rounded-xl border-2 focus:outline-none" style={{ borderColor: `${primaryColor}50`, background: surfaceColor, color: textColor, borderRadius: `${borderRadius}px` }}>
+                  {displaySections.map(key => <option key={key} value={key}>{key}</option>)}
+                </select>
                 {renderSection()}
               </div>
             )}
@@ -555,8 +622,6 @@ export default function ThemeBuilder() {
         </div>
       )}
 
-      
-
       {/* MODAL DEMO */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50" onClick={() => setIsModalOpen(false)}>
@@ -570,4 +635,3 @@ export default function ThemeBuilder() {
     </div>
   );
 }
-
