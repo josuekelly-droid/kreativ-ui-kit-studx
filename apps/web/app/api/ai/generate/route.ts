@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import Groq from 'groq-sdk';
+import { PrismaClient } from '@prisma/client';
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -12,8 +10,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
   }
 
+  // Récupérer ou créer l'utilisateur
+  let user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    user = await prisma.user.create({
+      data: { id: userId, email: `${userId}@clerk.com` },
+    });
+  }
+
+  // Vérifier la date et réinitialiser le compteur si nécessaire
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (user.aiGenerationsDate && new Date(user.aiGenerationsDate) < today) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { aiGenerationsToday: 0, aiGenerationsDate: today },
+    });
+    user.aiGenerationsToday = 0;
+  }
+
+  // Vérifier la limite pour les utilisateurs gratuits (max 10 par jour)
+  if (!user.isPremium && user.aiGenerationsToday >= 10) {
+    return NextResponse.json({ 
+      error: 'Limite quotidienne atteinte (10 générations). Passez à Premium pour un accès illimité !',
+      limitReached: true 
+    }, { status: 429 });
+  }
+
+  // Vérifier la clé API Groq
+  if (!process.env.GROQ_API_KEY) {
+    return NextResponse.json({ error: 'API IA non configurée' }, { status: 503 });
+  }
+
   try {
     const { prompt, type } = await req.json();
+    const { default: Groq } = await import('groq-sdk');
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
     let systemPrompt = "";
     if (type === "component") {
@@ -36,7 +69,23 @@ export async function POST(req: NextRequest) {
 
     const generatedCode = response.choices[0]?.message?.content || "";
 
-    return NextResponse.json({ success: true, code: generatedCode });
+    // Incrémenter le compteur
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { 
+        aiGenerationsToday: { increment: 1 },
+        aiGenerationsDate: today
+      },
+    });
+
+    const remaining = user.isPremium ? -1 : (10 - updatedUser.aiGenerationsToday);
+
+    return NextResponse.json({ 
+      success: true, 
+      code: generatedCode,
+      remaining: remaining,
+      isPremium: user.isPremium
+    });
   } catch (error) {
     console.error('AI Generation Error:', error);
     return NextResponse.json({ error: 'Erreur IA' }, { status: 500 });
