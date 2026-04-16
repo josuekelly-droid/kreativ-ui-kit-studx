@@ -7,39 +7,27 @@ export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
 
-    // Validation
-    if (!email || typeof email !== "string") {
+    if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
 
-    if (!email.includes("@")) {
-      return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
-    }
-
-    // Vérifier si déjà inscrit
+    // Vérifier si existe déjà
     const existing = await prisma.subscriber.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email },
     });
 
     if (existing) {
-      return NextResponse.json({ error: "Cet email est déjà inscrit" }, { status: 409 });
+      return NextResponse.json({ error: "Déjà inscrit" }, { status: 409 });
     }
 
-    // Créer l'inscription
-    const subscriber = await prisma.subscriber.create({
-      data: { email: email.toLowerCase() },
+    // Créer
+    await prisma.subscriber.create({
+      data: { email },
     });
 
-    console.log("✅ Nouvel inscrit:", subscriber.id, subscriber.email);
-
-    return NextResponse.json({ 
-      success: true, 
-      message: "Inscription réussie !" 
-    });
+    return NextResponse.json({ success: true, message: "Inscription réussie !" });
   } catch (error) {
-    console.error("❌ Newsletter error:", error);
-    return NextResponse.json({ 
-      error: "Erreur serveur, réessayez plus tard" 
-    }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
