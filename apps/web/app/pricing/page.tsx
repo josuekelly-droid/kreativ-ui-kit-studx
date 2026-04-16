@@ -208,7 +208,7 @@ export default function PricingPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               <tr className="hover:bg-purple-50 transition"><td className="p-4">Personnalisation</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
-              <tr className="hover:bg-purple-50 transition"><td className="p-4">Sauvegarde cloud</td><td className="p-4 text-center">1 thème</td><td className="p-4 text-center text-green-600">Illimité</td><td className="p-4 text-center text-green-600">Illimité</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Sauvegarde cloud</td><td className="p-4 text-center">+25 thèmes</td><td className="p-4 text-center text-green-600">Illimité</td><td className="p-4 text-center text-green-600">Illimité</td></tr>
               <tr className="hover:bg-purple-50 transition"><td className="p-4">Export JSON/CSS/Tailwind</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
               <tr className="hover:bg-purple-50 transition"><td className="p-4">Téléchargement HTML/React</td><td className="p-4 text-center text-red-500">✗</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
               <tr className="hover:bg-purple-50 transition"><td className="p-4">Sections & formulaires</td><td className="p-4 text-center">5/5</td><td className="p-4 text-center text-green-600">50+ / 40+</td><td className="p-4 text-center text-green-600">50+ / 40+</td></tr>
