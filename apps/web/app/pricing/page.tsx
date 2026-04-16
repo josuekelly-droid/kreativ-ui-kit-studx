@@ -16,7 +16,7 @@ export default function PricingPage() {
       icon: "🎁",
       features: [
         "Personnalisation du thème",
-        "Sauvegarde cloud",
+        "Sauvegarde cloud (+25 thèmes)",
         "Export JSON / CSS / Tailwind",
         "Téléchargement HTML/React",
         "Accès complet aux sections",
@@ -95,28 +95,28 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header animé */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-20 text-center text-white">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-purple-700 to-pink-600 py-20 text-center text-white">
         <h1 className="text-5xl md:text-6xl font-bold mb-4 tracking-tight animate-fade-in">Des offres pensées pour vous</h1>
-        <p className="text-xl text-slate-300 max-w-2xl mx-auto animate-fade-in-delay">
+        <p className="text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-delay">
           Choisissez le plan qui correspond à vos besoins. Évoluez à votre rythme.
         </p>
       </div>
 
-      {/* Plans avec icônes et animations */}
+      {/* Plans */}
       <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-8">
           {Object.entries(plans).map(([key, plan], idx) => (
             <div
               key={key}
               className={`rounded-2xl overflow-hidden bg-white shadow-xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-slide-up ${
-                plan.popular ? "ring-2 ring-indigo-500 scale-105" : ""
+                plan.popular ? "ring-2 ring-purple-500 scale-105" : ""
               }`}
               style={{ animationDelay: `${idx * 150}ms` }}
             >
               {plan.popular && (
-                <div className="bg-indigo-600 text-white text-center py-2 text-sm font-medium tracking-wide animate-pulse-light">
+                <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-2 text-sm font-medium tracking-wide animate-pulse-light">
                   RECOMMANDÉ
                 </div>
               )}
@@ -140,7 +140,7 @@ export default function PricingPage() {
                 {plan.price === 0 ? (
                   <Link
                     href="/sign-up"
-                    className="block text-center py-3 rounded-xl font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition transform hover:scale-105"
+                    className="block text-center py-3 rounded-xl font-semibold bg-purple-100 text-purple-700 hover:bg-purple-200 transition transform hover:scale-105"
                   >
                     {plan.cta}
                   </Link>
@@ -179,7 +179,7 @@ export default function PricingPage() {
                       <button
                         onClick={() => setSelectedPlan(key as "monthly" | "yearly")}
                         disabled={isProcessing}
-                        className="w-full py-3 rounded-xl font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition transform hover:scale-105"
+                        className="w-full py-3 rounded-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg transition transform hover:scale-105"
                       >
                         {plan.cta}
                       </button>
@@ -192,60 +192,60 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Comparaison avec animation */}
+      {/* Comparaison */}
       <div className="max-w-6xl mx-auto px-4 py-16 animate-fade-in">
         <h2 className="text-3xl font-bold text-center text-slate-800 mb-4">Comparaison détaillée</h2>
         <p className="text-center text-slate-500 mb-12">Tout voir en un coup d'œil</p>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse bg-white rounded-xl shadow-md overflow-hidden">
             <thead>
-              <tr className="bg-slate-50 border-b">
-                <th className="p-4 text-left text-slate-600">Fonctionnalité</th>
-                <th className="p-4 text-center text-slate-600">🎁 Gratuit</th>
-                <th className="p-4 text-center text-slate-600">⚡ Pro Mensuel</th>
-                <th className="p-4 text-center text-slate-600">💎 Pro Annuel</th>
+              <tr className="bg-gradient-to-r from-purple-100 to-pink-100 border-b">
+                <th className="p-4 text-left text-slate-700">Fonctionnalité</th>
+                <th className="p-4 text-center text-slate-700">🎁 Gratuit</th>
+                <th className="p-4 text-center text-slate-700">⚡ Pro Mensuel</th>
+                <th className="p-4 text-center text-slate-700">💎 Pro Annuel</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Personnalisation</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Sauvegarde cloud</td><td className="p-4 text-center">1 thème</td><td className="p-4 text-center text-green-600">Illimité</td><td className="p-4 text-center text-green-600">Illimité</td></tr>
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Export JSON/CSS/Tailwind</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Téléchargement HTML/React</td><td className="p-4 text-center text-red-500">✗</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Sections & formulaires</td><td className="p-4 text-center">5/5</td><td className="p-4 text-center text-green-600">50+ / 40+</td><td className="p-4 text-center text-green-600">50+ / 40+</td></tr>
-              <tr className="hover:bg-slate-50 transition"><td className="p-4">Support prioritaire</td><td className="p-4 text-center text-red-500">✗</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Personnalisation</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Sauvegarde cloud</td><td className="p-4 text-center">1 thème</td><td className="p-4 text-center text-green-600">Illimité</td><td className="p-4 text-center text-green-600">Illimité</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Export JSON/CSS/Tailwind</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Téléchargement HTML/React</td><td className="p-4 text-center text-red-500">✗</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Sections & formulaires</td><td className="p-4 text-center">5/5</td><td className="p-4 text-center text-green-600">50+ / 40+</td><td className="p-4 text-center text-green-600">50+ / 40+</td></tr>
+              <tr className="hover:bg-purple-50 transition"><td className="p-4">Support prioritaire</td><td className="p-4 text-center text-red-500">✗</td><td className="p-4 text-center text-green-600">✓</td><td className="p-4 text-center text-green-600">✓</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Pourquoi Premium avec animations */}
-      <div className="bg-slate-900 py-20">
+      {/* Pourquoi Premium */}
+      <div className="bg-gradient-to-r from-purple-900 to-pink-800 py-20">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4 animate-fade-in">Pourquoi passer à Premium ?</h2>
-          <p className="text-slate-300 mb-12 max-w-2xl mx-auto animate-fade-in-delay">
+          <p className="text-purple-200 mb-12 max-w-2xl mx-auto animate-fade-in-delay">
             Débloquez tout le potentiel de Kreativ UI Kit
           </p>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 bg-slate-800 rounded-xl hover:scale-105 transition-transform duration-300">
+            <div className="p-6 bg-white/10 rounded-xl backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div className="text-4xl mb-3">⚡</div>
               <h3 className="text-xl font-bold text-white mb-2">Illimité</h3>
-              <p className="text-slate-400">Téléchargements, exports, générations IA sans restriction</p>
+              <p className="text-purple-200">Téléchargements, exports, générations IA sans restriction</p>
             </div>
-            <div className="p-6 bg-slate-800 rounded-xl hover:scale-105 transition-transform duration-300">
+            <div className="p-6 bg-white/10 rounded-xl backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div className="text-4xl mb-3">🎯</div>
               <h3 className="text-xl font-bold text-white mb-2">Complet</h3>
-              <p className="text-slate-400">Toutes les sections et tous les formulaires débloqués</p>
+              <p className="text-purple-200">Toutes les sections et tous les formulaires débloqués</p>
             </div>
-            <div className="p-6 bg-slate-800 rounded-xl hover:scale-105 transition-transform duration-300">
+            <div className="p-6 bg-white/10 rounded-xl backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div className="text-4xl mb-3">💬</div>
               <h3 className="text-xl font-bold text-white mb-2">Prioritaire</h3>
-              <p className="text-slate-400">Support réactif et assistance dédiée</p>
+              <p className="text-purple-200">Support réactif et assistance dédiée</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* FAQ Accordéon animé */}
+      {/* FAQ */}
       <div className="max-w-4xl mx-auto px-4 py-20">
         <h2 className="text-3xl font-bold text-center text-slate-800 mb-4">Questions fréquentes</h2>
         <p className="text-center text-slate-500 mb-12">Tout ce que vous devez savoir</p>
@@ -254,7 +254,7 @@ export default function PricingPage() {
             <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
               <button
                 onClick={() => toggleFaq(i)}
-                className="w-full px-6 py-4 text-left font-medium text-slate-800 flex justify-between items-center hover:bg-slate-50 transition"
+                className="w-full px-6 py-4 text-left font-medium text-slate-800 flex justify-between items-center hover:bg-purple-50 transition"
               >
                 {faq.q}
                 <span className={`text-slate-400 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`}>▼</span>
@@ -269,14 +269,14 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* CTA animé */}
-      <div className="bg-indigo-600 py-20">
+      {/* CTA */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20">
         <div className="max-w-4xl mx-auto px-4 text-center animate-float">
           <h2 className="text-3xl font-bold text-white mb-4">Prêt à commencer ?</h2>
-          <p className="text-indigo-100 mb-8">Rejoignez des milliers d'utilisateurs</p>
+          <p className="text-purple-100 mb-8">Rejoignez des milliers d'utilisateurs</p>
           <Link
             href="/sign-up"
-            className="inline-block px-8 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:shadow-lg transition hover:scale-105"
+            className="inline-block px-8 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition hover:scale-105"
           >
             Créer un compte gratuit
           </Link>
