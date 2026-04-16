@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
 
-    // Vérifier si existe déjà
     const existing = await prisma.subscriber.findUnique({
       where: { email },
     });
@@ -20,14 +19,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Déjà inscrit" }, { status: 409 });
     }
 
-    // Créer
-    await prisma.subscriber.create({
+    const subscriber = await prisma.subscriber.create({
       data: { email },
     });
 
-    return NextResponse.json({ success: true, message: "Inscription réussie !" });
+    return NextResponse.json({ success: true, id: subscriber.id });
   } catch (error) {
-    console.error(error);
+    console.error("Newsletter error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
