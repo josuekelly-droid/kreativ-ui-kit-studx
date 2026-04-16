@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import Link from "next/link";
 
 export default function PricingPage() {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly" | null>(null);
@@ -69,8 +70,7 @@ export default function PricingPage() {
       const data = await response.json();
       if (data.success) {
         alert(`🎉 Merci pour votre abonnement ${plan === "monthly" ? "mensuel" : "annuel"} !`);
-        // Rediriger vers le builder ou dashboard
-        window.location.href = "/builder";
+        window.location.href = "/dashboard";
       } else {
         alert("❌ Erreur lors du paiement");
       }
@@ -91,7 +91,7 @@ export default function PricingPage() {
         <p className="text-xl opacity-90">Choisissez le plan qui vous convient</p>
       </div>
 
-      {/* Plans */}
+      {/* Plans (inchangés) */}
       <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-8">
           {Object.entries(plans).map(([key, plan]) => (
@@ -173,6 +173,155 @@ export default function PricingPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Tableau comparatif détaillé */}
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold text-center mb-4">Comparaison détaillée</h2>
+        <p className="text-center text-gray-600 mb-12">Découvrez précisément ce que chaque plan vous offre</p>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse bg-white rounded-2xl shadow-lg overflow-hidden">
+            <thead>
+              <tr className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                <th className="p-4 text-left">Fonctionnalité</th>
+                <th className="p-4 text-center">Gratuit</th>
+                <th className="p-4 text-center">Pro Mensuel</th>
+                <th className="p-4 text-center">Pro Annuel</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Personnalisation du thème</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Sauvegarde cloud</td>
+                <td className="p-4 text-center">1 thème</td>
+                <td className="p-4 text-center text-green-600">Illimité</td>
+                <td className="p-4 text-center text-green-600">Illimité</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Export JSON / CSS / Tailwind</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Téléchargement HTML/React</td>
+                <td className="p-4 text-center text-red-500">✗</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Accès complet (50+ sections)</td>
+                <td className="p-4 text-center text-red-500">✗ (5 seulement)</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Accès complet (40+ formulaires)</td>
+                <td className="p-4 text-center text-red-500">✗ (5 seulement)</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Export ZIP du kit complet</td>
+                <td className="p-4 text-center text-red-500">✗</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Assistant IA (10 générations/jour)</td>
+                <td className="p-4 text-center text-yellow-600">10/jour</td>
+                <td className="p-4 text-center text-green-600">Illimité</td>
+                <td className="p-4 text-center text-green-600">Illimité</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition">
+                <td className="p-4 font-semibold">Support prioritaire</td>
+                <td className="p-4 text-center text-red-500">✗</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+                <td className="p-4 text-center text-green-600">✓</td>
+              </tr>
+              <tr className="hover:bg-gray-50 transition bg-purple-50">
+                <td className="p-4 font-semibold">Économie réalisée</td>
+                <td className="p-4 text-center">-</td>
+                <td className="p-4 text-center">-</td>
+                <td className="p-4 text-center font-bold text-purple-600">2 mois offerts</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Pourquoi passer à Premium */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-16">
+        <div className="max-w-6xl mx-auto px-4 text-center text-white">
+          <h2 className="text-3xl font-bold mb-4">Pourquoi passer à Premium ?</h2>
+          <p className="text-xl opacity-90 mb-12 max-w-2xl mx-auto">
+            Débloquez tout le potentiel de Kreativ UI Kit Pro
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
+              <div className="text-4xl mb-4">🚀</div>
+              <h3 className="text-xl font-bold mb-2">Productivité maximale</h3>
+              <p className="opacity-80">Gagnez du temps avec les exports et l'IA illimitée</p>
+            </div>
+            <div className="p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
+              <div className="text-4xl mb-4">🎨</div>
+              <h3 className="text-xl font-bold mb-2">Créativité sans limites</h3>
+              <p className="opacity-80">Accédez à toutes les sections et tous les formulaires</p>
+            </div>
+            <div className="p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
+              <div className="text-4xl mb-4">💎</div>
+              <h3 className="text-xl font-bold mb-2">Support prioritaire</h3>
+              <p className="opacity-80">Une assistance rapide et dédiée</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold text-center mb-4">Questions fréquentes</h2>
+        <p className="text-center text-gray-600 mb-12">Tout ce que vous devez savoir sur nos offres</p>
+        
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="p-6 bg-white rounded-2xl shadow-md">
+            <h3 className="font-bold text-lg mb-2">Puis-je passer du gratuit au premium plus tard ?</h3>
+            <p className="text-gray-600">Oui, à tout moment. Vos thèmes sauvegardés restent accessibles.</p>
+          </div>
+          <div className="p-6 bg-white rounded-2xl shadow-md">
+            <h3 className="font-bold text-lg mb-2">Puis-je résilier mon abonnement ?</h3>
+            <p className="text-gray-600">Oui, depuis votre tableau de bord. Aucun engagement.</p>
+          </div>
+          <div className="p-6 bg-white rounded-2xl shadow-md">
+            <h3 className="font-bold text-lg mb-2">Quels moyens de paiement sont acceptés ?</h3>
+            <p className="text-gray-600">PayPal, carte bancaire (via PayPal). Paiement sécurisé.</p>
+          </div>
+          <div className="p-6 bg-white rounded-2xl shadow-md">
+            <h3 className="font-bold text-lg mb-2">Y a-t-il une période d'essai ?</h3>
+            <p className="text-gray-600">Le plan gratuit vous permet de tester toutes les fonctionnalités de base.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA final */}
+      <div className="py-20 text-center bg-gradient-to-r from-purple-600 to-pink-600">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-white mb-4">Prêt à passer à la vitesse supérieure ?</h2>
+          <p className="text-white opacity-90 mb-8">Rejoignez des milliers d'utilisateurs qui ont choisi Kreativ UI Pro</p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <a href="/sign-up" className="px-8 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition transform hover:scale-105">
+              🚀 Créer un compte gratuit
+            </a>
+            <a href="#top" className="px-8 py-3 bg-transparent border-2 border-white rounded-xl font-semibold hover:bg-white/10 transition">
+              💰 Voir les offres
+            </a>
+          </div>
         </div>
       </div>
     </div>
