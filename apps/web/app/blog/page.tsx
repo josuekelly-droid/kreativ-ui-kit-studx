@@ -18,6 +18,7 @@ export default function BlogPage() {
   const articles = [
     {
       id: 1,
+      slug: "assistant-ia-arrive",
       title: "L'assistant IA est arrivé !",
       excerpt: "Générez du code React/Tailwind instantanément. Décrivez ce que vous voulez, l'IA le crée pour vous.",
       date: "15 avril 2026",
@@ -28,6 +29,7 @@ export default function BlogPage() {
     },
     {
       id: 2,
+      slug: "personnaliser-votre-theme",
       title: "Comment personnaliser votre thème",
       excerpt: "Découvrez comment utiliser le ThemeBuilder pour créer un design system unique.",
       date: "10 avril 2026",
@@ -38,6 +40,7 @@ export default function BlogPage() {
     },
     {
       id: 3,
+      slug: "export-tailwind-config",
       title: "Nouveau : Export Tailwind Config",
       excerpt: "Exportez votre thème directement en fichier de configuration Tailwind.",
       date: "5 avril 2026",
@@ -48,6 +51,7 @@ export default function BlogPage() {
     },
     {
       id: 4,
+      slug: "10-astuces-productivite",
       title: "10 astuces pour booster votre productivité",
       excerpt: "Gagnez du temps avec ces astuces méconnues de Kreativ UI Kit Pro.",
       date: "28 mars 2026",
@@ -58,6 +62,7 @@ export default function BlogPage() {
     },
     {
       id: 5,
+      slug: "premium-telechargements-illimites",
       title: "Premium : Téléchargements illimités",
       excerpt: "Les utilisateurs Premium bénéficient désormais de téléchargements illimités.",
       date: "20 mars 2026",
@@ -68,6 +73,7 @@ export default function BlogPage() {
     },
     {
       id: 6,
+      slug: "ia-genere-code-qualite",
       title: "Comment l'IA génère du code de qualité",
       excerpt: "Découvrez les coulisses de notre assistant IA et comment il produit du code fiable.",
       date: "15 mars 2026",
@@ -88,7 +94,6 @@ export default function BlogPage() {
     if (!email) return;
 
     setNewsletterStatus("loading");
-    // Simulation d'envoi (à remplacer par une vraie API plus tard)
     setTimeout(() => {
       console.log("Email capturé:", email);
       setNewsletterStatus("success");
@@ -128,7 +133,7 @@ export default function BlogPage() {
 
         {/* Grille d'articles */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {filteredArticles.map((article, index) => (
+          {filteredArticles.map((article) => (
             <div
               key={article.id}
               className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
@@ -146,9 +151,12 @@ export default function BlogPage() {
                 <p className="text-gray-600 text-sm mb-4">{article.excerpt}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-purple-600">👤 {article.author}</span>
-                  <button className="text-purple-600 font-semibold text-sm hover:text-purple-800 transition">
+                  <Link
+                    href={`/blog/${article.slug}`}
+                    className="text-purple-600 font-semibold text-sm hover:text-purple-800 transition"
+                  >
                     Lire la suite →
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
