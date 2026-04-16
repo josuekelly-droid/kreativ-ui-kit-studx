@@ -5,6 +5,8 @@ import Link from "next/link";
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [email, setEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const categories = [
     { id: "all", label: "Tous", icon: "📰" },
@@ -23,6 +25,34 @@ export default function BlogPage() {
   ];
 
   const filteredArticles = activeCategory === "all" ? articles : articles.filter((a) => a.category === activeCategory);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setNewsletterStatus("loading");
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setNewsletterStatus("success");
+        setEmail("");
+        setTimeout(() => setNewsletterStatus("idle"), 3000);
+      } else {
+        console.error(data.error);
+        setNewsletterStatus("error");
+        setTimeout(() => setNewsletterStatus("idle"), 3000);
+      }
+    } catch (error) {
+      console.error(error);
+      setNewsletterStatus("error");
+      setTimeout(() => setNewsletterStatus("idle"), 3000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
@@ -72,6 +102,37 @@ export default function BlogPage() {
         {filteredArticles.length === 0 && (
           <div className="text-center py-16"><p className="text-gray-500">Aucun article dans cette catégorie.</p></div>
         )}
+
+        {/* Newsletter */}
+        <div className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
+          <h2 className="text-2xl font-bold mb-2">📧 Restez informé</h2>
+          <p className="text-white/90 mb-6">
+            Recevez les dernières actualités et tutoriels directement dans votre boîte mail.
+          </p>
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Votre adresse email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="flex-1 px-4 py-3 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button
+              type="submit"
+              disabled={newsletterStatus === "loading"}
+              className="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50"
+            >
+              {newsletterStatus === "loading" ? "..." : "S'abonner"}
+            </button>
+          </form>
+          {newsletterStatus === "success" && (
+            <p className="text-green-200 mt-3 text-sm">✅ Merci pour votre inscription !</p>
+          )}
+          {newsletterStatus === "error" && (
+            <p className="text-red-200 mt-3 text-sm">❌ Erreur, réessayez.</p>
+          )}
+        </div>
       </div>
     </div>
   );
