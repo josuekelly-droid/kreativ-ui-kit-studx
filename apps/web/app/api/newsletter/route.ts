@@ -6,32 +6,40 @@ const prisma = new PrismaClient();
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
-    console.log("📧 Email reçu:", email);
 
-    if (!email || !email.includes("@")) {
+    // Validation
+    if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
 
-    // Test de connexion à la base
-    try {
-      await prisma.$queryRaw`SELECT 1`;
-      console.log("✅ Base de données connectée");
-    } catch (dbError) {
-      console.error("❌ Connexion DB échouée:", dbError);
-      return NextResponse.json({ error: "Erreur base de données" }, { status: 500 });
+    if (!email.includes("@")) {
+      return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
     }
 
-    const existing = await prisma.subscriber.findUnique({ where: { email } });
+    // Vérifier si déjà inscrit
+    const existing = await prisma.subscriber.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
     if (existing) {
-      return NextResponse.json({ error: "Déjà inscrit" }, { status: 409 });
+      return NextResponse.json({ error: "Cet email est déjà inscrit" }, { status: 409 });
     }
 
-    const subscriber = await prisma.subscriber.create({ data: { email } });
-    console.log("✅ Inscrit:", subscriber.id);
+    // Créer l'inscription
+    const subscriber = await prisma.subscriber.create({
+      data: { email: email.toLowerCase() },
+    });
 
-    return NextResponse.json({ success: true });
+    console.log("✅ Nouvel inscrit:", subscriber.id, subscriber.email);
+
+    return NextResponse.json({ 
+      success: true, 
+      message: "Inscription réussie !" 
+    });
   } catch (error) {
     console.error("❌ Newsletter error:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Erreur serveur, réessayez plus tard" 
+    }, { status: 500 });
   }
 }
