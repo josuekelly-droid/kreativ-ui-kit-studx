@@ -17,12 +17,14 @@ export default function AboutPage() {
     { name: "Kelly Josué AKPLOGAN", role: "Fondateur & Designer", avatar: "👨‍🎨", bio: "Designer passionné par les interfaces et l'expérience utilisateur." },
   ];
 
+  const technologies = ["Next.js 16", "TypeScript", "Tailwind CSS", "PostgreSQL (Neon)", "Clerk (Auth)", "PayPal", "Groq (IA)", "Prisma"];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-purple-700 to-pink-600 py-20 text-center text-white">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">À propos de Kreativ UI</h1>
-        <p className="text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-delay">
+        <h1 className="text-5xl md:text-6xl font-bold mb-4">À propos de Kreativ UI</h1>
+        <p className="text-xl text-white/80 max-w-2xl mx-auto">
           Nous croyons que la création d'interfaces ne devrait jamais être une contrainte.
         </p>
       </div>
@@ -95,14 +97,12 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">L'équipe</h2>
           <p className="text-center text-gray-600 mb-10">Des passionnés à votre service</p>
           <div className="flex justify-center">
-            {team.map((member, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 text-center shadow-md w-80">
-                <div className="text-6xl mb-3">{member.avatar}</div>
-                <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
-                <p className="text-purple-600 text-sm mb-2">{member.role}</p>
-                <p className="text-gray-500 text-sm">{member.bio}</p>
-              </div>
-            ))}
+            <div className="bg-white rounded-2xl p-6 text-center shadow-md w-80">
+              <div className="text-6xl mb-3">{team[0].avatar}</div>
+              <h3 className="text-xl font-bold text-gray-800">{team[0].name}</h3>
+              <p className="text-purple-600 text-sm mb-2">{team[0].role}</p>
+              <p className="text-gray-500 text-sm">{team[0].bio}</p>
+            </div>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Technologies</h2>
           <p className="text-center text-gray-600 mb-10">Une stack moderne et robuste</p>
           <div className="flex flex-wrap justify-center gap-3">
-            {["Next.js 16", "TypeScript", "Tailwind CSS", "PostgreSQL (Neon)", "Clerk (Auth)", "PayPal", "Groq (IA)", "Prisma"].map((tech, i) => (
+            {technologies.map((tech, i) => (
               <span key={i} className="px-4 py-2 bg-white rounded-full text-sm text-gray-700 shadow-sm">
                 {tech}
               </span>
@@ -133,20 +133,6 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-        }
-        .animate-fade-in-delay {
-          animation: fadeIn 0.8s ease-out 0.3s forwards;
-          opacity: 0;
-        }
-      `}</style>
     </div>
   );
 }
