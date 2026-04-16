@@ -16,7 +16,7 @@ export default function PricingPage() {
       icon: "🎁",
       features: [
         "Personnalisation du thème",
-        "Sauvegarde cloud (1 thème)",
+        "Sauvegarde cloud",
         "Export JSON / CSS / Tailwind",
         "Téléchargement HTML/React",
         "Accès complet aux sections",
