@@ -34,9 +34,9 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-gray-900 mb-4">Ressources</h3>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-purple-600 transition">Blog</a></li>
-              <li><a href="#" className="hover:text-purple-600 transition">Support</a></li>
-              <li><a href="#" className="hover:text-purple-600 transition">API</a></li>
+              <li><a href="/blog" className="hover:text-purple-600 transition">Blog</a></li>
+              <li><a href="/support" className="hover:text-purple-600 transition">Support</a></li>
+              <li><a href="/api-docs" className="hover:text-purple-600 transition">API</a></li>
               <li><Link href="/contact" className="hover:text-purple-600 transition">Contact</Link></li>
             </ul>
           </div>
@@ -50,10 +50,10 @@ export default function Footer() {
               <li><Link href="/legal/cookies" className="hover:text-purple-600 transition">Cookies</Link></li>
             </ul>
             <div className="mt-4 flex gap-4">
-              <a href="#" className="text-gray-500 hover:text-purple-600 transition">🐦</a>
+              <a href="https://x.com/jxjxkelly" className="text-gray-500 hover:text-purple-600 transition">🐦</a>
               <a href="#" className="text-gray-500 hover:text-purple-600 transition">💬</a>
-              <a href="#" className="text-gray-500 hover:text-purple-600 transition">📧</a>
-              <a href="#" className="text-gray-500 hover:text-purple-600 transition">🐙</a>
+              <a href="mailto:kelly.webnux@gmail.com" className="text-gray-500 hover:text-purple-600 transition">📧</a>
+              <a href="https://github.com/josuekelly-droid" className="text-gray-500 hover:text-purple-600 transition">🐙</a>
             </div>
           </div>
         </div>
