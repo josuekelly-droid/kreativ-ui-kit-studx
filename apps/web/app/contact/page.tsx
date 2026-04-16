@@ -119,7 +119,7 @@ export default function ContactPage() {
               <span className="text-2xl">🐦</span>
               <div>
                 <p className="font-semibold">Twitter / X</p>
-                <a href="#" className="text-purple-600 hover:underline">@kreativui</a>
+                <a href="https://x.com/jxjxkelly" className="text-purple-600 hover:underline">@jxjxkelly</a>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -133,7 +133,7 @@ export default function ContactPage() {
               <span className="text-2xl">🐙</span>
               <div>
                 <p className="font-semibold">GitHub</p>
-                <a href="#" className="text-purple-600 hover:underline">github.com/kreativ-ui</a>
+                <a href="https://github.com/josuekelly-droid/" className="text-purple-600 hover:underline">@josuekelly-droid</a>
               </div>
             </div>
           </div>
