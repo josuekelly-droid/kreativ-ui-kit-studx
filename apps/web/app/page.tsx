@@ -1,25 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function HomePage() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const testimonials = [
-    { name: "Sophie Martin", role: "Lead Designer @ CreativeLab", content: "Un outil exceptionnel qui a révolutionné notre workflow. Gain de temps incroyable !", rating: 5, avatar: "👩‍🎨" },
-    { name: "Thomas Dubois", role: "Développeur Fullstack", content: "La génération IA de code est bluffante. Je gagne des heures sur chaque projet.", rating: 5, avatar: "👨‍💻" },
-    { name: "Marie Lambert", role: "Chef de produit @ TechCorp", content: "Notre équipe l'utilise au quotidien. Le meilleur investissement de l'année.", rating: 5, avatar: "👩‍💼" },
-    { name: "David Ngoma", role: "CTO @ StartupHub", content: "Une plateforme solide qui nous a permis de livrer nos projets plus rapidement.", rating: 5, avatar: "👨‍💼" },
-    { name: "Claire Dupont", role: "UX Designer Freelance", content: "La personnalisation est infinie. Je recommande à tous mes clients !", rating: 5, avatar: "👩‍🎨" },
+    { 
+      name: "Sophie Martin", 
+      role: "Lead Designer @ CreativeLab", 
+      content: "Un outil exceptionnel qui a révolutionné notre workflow. Gain de temps incroyable !", 
+      rating: 5, 
+      avatar: "👩‍🎨",
+      image: "https://randomuser.me/api/portraits/women/1.jpg"
+    },
+    { 
+      name: "Thomas Dubois", 
+      role: "Développeur Fullstack", 
+      content: "La génération IA de code est bluffante. Je gagne des heures sur chaque projet.", 
+      rating: 5, 
+      avatar: "👨‍💻",
+      image: "https://randomuser.me/api/portraits/men/2.jpg"
+    },
+    { 
+      name: "Marie Lambert", 
+      role: "Chef de produit @ TechCorp", 
+      content: "Notre équipe l'utilise au quotidien. Le meilleur investissement de l'année.", 
+      rating: 5, 
+      avatar: "👩‍💼",
+      image: "https://randomuser.me/api/portraits/women/3.jpg"
+    },
+    { 
+      name: "David Ngoma", 
+      role: "CTO @ StartupHub", 
+      content: "Une plateforme solide qui nous a permis de livrer nos projets plus rapidement.", 
+      rating: 5, 
+      avatar: "👨‍💼",
+      image: "https://randomuser.me/api/portraits/men/4.jpg"
+    },
+    { 
+      name: "Claire Dupont", 
+      role: "UX Designer Freelance", 
+      content: "La personnalisation est infinie. Je recommande à tous mes clients !", 
+      rating: 5, 
+      avatar: "👩‍🎨",
+      image: "https://randomuser.me/api/portraits/women/5.jpg"
+    },
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+      if (!isDragging) {
+        setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      }
+    }, 6000);
     return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, [isDragging, testimonials.length]);
 
   const nextSlide = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -29,15 +70,36 @@ export default function HomePage() {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
+  // Gestion du drag pour mobile/desktop
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
+    setScrollLeft(sliderRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - (sliderRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    if (sliderRef.current) {
+      sliderRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
-      {/* Hero Section avec animation */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20 text-center text-white animate-fade-in-up">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-slide-in">🎨 Kreativ UI Kit Pro</h1>
-        <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto animate-slide-in-delay">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20 text-center text-white">
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up">🎨 Kreativ UI Kit Pro</h1>
+        <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay">
           Créez votre design system en temps réel. Personnalisez, exportez, et téléchargez vos composants.
         </p>
-        <div className="flex gap-4 justify-center flex-wrap animate-fade-in">
+        <div className="flex gap-4 justify-center flex-wrap animate-fade-in-up-delay-2">
           <Link href="/builder" className="px-8 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition transform hover:scale-105 duration-300">
             🚀 Commencer gratuitement
           </Link>
@@ -47,16 +109,17 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Statistiques avec animation au scroll */}
-      <div className="max-w-6xl mx-auto px-4 py-16 animate-on-scroll">
+      {/* Statistiques */}
+      <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { value: "10K+", label: "Utilisateurs actifs", delay: 0 },
-            { value: "500+", label: "Projets créés", delay: 100 },
-            { value: "99%", label: "Satisfaction client", delay: 200 },
-            { value: "50K+", label: "Revenus générés", delay: 300 },
+            { value: "10K+", label: "Utilisateurs actifs", icon: "👥" },
+            { value: "500+", label: "Projets créés", icon: "🚀" },
+            { value: "99%", label: "Satisfaction client", icon: "⭐" },
+            { value: "50K+", label: "Revenus générés", icon: "💰" },
           ].map((stat, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 transform hover:scale-105 transition-all duration-300 animate-fade-in-up" style={{ animationDelay: `${stat.delay}ms` }}>
+            <div key={i} className="group p-6 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <div className="text-4xl mb-2">{stat.icon}</div>
               <div className="text-4xl font-bold text-purple-600">{stat.value}</div>
               <div className="text-gray-600 mt-1">{stat.label}</div>
             </div>
@@ -66,8 +129,8 @@ export default function HomePage() {
 
       {/* Features Section */}
       <div className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-4 animate-fade-in-up">Fonctionnalités puissantes</h2>
-        <p className="text-center text-gray-600 mb-12 animate-fade-in-up">Tout ce dont vous avez besoin pour créer des interfaces exceptionnelles</p>
+        <h2 className="text-3xl font-bold text-center mb-4">Fonctionnalités puissantes</h2>
+        <p className="text-center text-gray-600 mb-12">Tout ce dont vous avez besoin pour créer des interfaces exceptionnelles</p>
         
         <div className="grid md:grid-cols-3 gap-8">
           {[
@@ -78,8 +141,8 @@ export default function HomePage() {
             { icon: "☁️", title: "Sauvegarde cloud", desc: "Retrouvez vos thèmes sur tous vos appareils" },
             { icon: "💰", title: "Export complet", desc: "HTML, React, Tailwind, ZIP — tout est possible" },
           ].map((f, i) => (
-            <div key={i} className="p-6 rounded-2xl text-center shadow-lg hover:shadow-xl transition-all duration-300 bg-white transform hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="text-5xl mb-4">{f.icon}</div>
+            <div key={i} className="group p-6 rounded-2xl text-center bg-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">{f.icon}</div>
               <h3 className="text-xl font-bold mb-2">{f.title}</h3>
               <p className="text-gray-600">{f.desc}</p>
             </div>
@@ -90,12 +153,12 @@ export default function HomePage() {
       {/* Assistant IA Section */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20">
         <div className="max-w-6xl mx-auto px-4 text-center text-white">
-          <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 mb-6 animate-pulse">
+          <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 mb-6">
             <span className="text-2xl">🤖</span>
             <span className="font-semibold">Nouveauté</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in-up">Assistant IA intégré</h2>
-          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto animate-fade-in-up">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Assistant IA intégré</h2>
+          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Générez du code React/Tailwind instantanément. Décrivez votre composant, l'IA le crée pour vous.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
@@ -109,62 +172,117 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Témoignages - Carrousel Slider */}
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-4 animate-fade-in-up">Ils nous font confiance</h2>
-        <p className="text-center text-gray-600 mb-12 animate-fade-in-up">Des milliers de développeurs et designers utilisent Kreativ UI</p>
-        
+      {/* Témoignages - Design Premium */}
+      <div className="max-w-6xl mx-auto px-4 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Ce que nos utilisateurs disent
+          </h2>
+          <p className="text-gray-600 text-lg">Rejoignez une communauté de créateurs passionnés</p>
+        </div>
+
         <div className="relative">
-          {/* Carrousel */}
-          <div className="overflow-hidden">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
+          {/* Navigation buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-110"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-purple-600 hover:text-white transition-all duration-300 hover:scale-110"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Slider */}
+          <div
+            ref={sliderRef}
+            className="overflow-hidden cursor-grab active:cursor-grabbing"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <div
+              className="flex transition-transform duration-700 ease-out"
               style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
             >
               {testimonials.map((t, i) => (
-                <div key={i} className="w-full flex-shrink-0 px-4">
-                  <div className="p-8 rounded-2xl shadow-xl bg-gradient-to-br from-white to-purple-50 transform transition-all duration-300 hover:scale-105">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="text-5xl bg-gradient-to-br from-purple-600 to-pink-600 rounded-full w-16 h-16 flex items-center justify-center text-white shadow-lg">
-                        {t.avatar}
+                <div key={i} className="w-full flex-shrink-0 px-4 md:px-6">
+                  <div className="bg-gradient-to-br from-white to-purple-50 rounded-3xl shadow-2xl p-8 md:p-10 hover:shadow-3xl transition-all duration-500">
+                    <div className="flex flex-col md:flex-row gap-6 items-start">
+                      {/* Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="relative">
+                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 p-1">
+                            <img
+                              src={t.image}
+                              alt={t.name}
+                              className="w-full h-full rounded-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                const parent = (e.target as HTMLImageElement).parentElement;
+                                if (parent) {
+                                  const fallback = document.createElement('div');
+                                  fallback.className = 'w-full h-full rounded-full bg-white flex items-center justify-center text-4xl';
+                                  fallback.textContent = t.avatar;
+                                  parent.appendChild(fallback);
+                                }
+                              }}
+                            />
+                          </div>
+                          <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-5 h-5 border-2 border-white"></div>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-bold text-xl">{t.name}</h3>
-                        <p className="text-sm text-gray-500">{t.role}</p>
+
+                      {/* Content */}
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                          <div>
+                            <h3 className="text-xl md:text-2xl font-bold text-gray-800">{t.name}</h3>
+                            <p className="text-purple-600 font-medium">{t.role}</p>
+                          </div>
+                          <div className="flex gap-1">
+                            {[...Array(t.rating)].map((_, i) => (
+                              <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                              </svg>
+                            ))}
+                          </div>
+                        </div>
+                        <blockquote className="text-gray-700 text-lg md:text-xl leading-relaxed italic">
+                          "{t.content}"
+                        </blockquote>
+                        <div className="mt-6 flex items-center gap-2 text-sm text-gray-500">
+                          <svg className="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
+                          </svg>
+                          <span>Client vérifié</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex text-yellow-400 mb-3">
-                      {"⭐".repeat(t.rating)}
-                    </div>
-                    <p className="text-gray-600 italic text-lg">"{t.content}"</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Boutons de navigation */}
-          <button 
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 w-10 h-10 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          >
-            ◀
-          </button>
-          <button 
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 w-10 h-10 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          >
-            ▶
-          </button>
-
           {/* Indicateurs */}
-          <div className="flex justify-center gap-2 mt-8">
+          <div className="flex justify-center gap-3 mt-8">
             {testimonials.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentTestimonial(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentTestimonial === i ? "w-8 bg-purple-600" : "w-2 bg-purple-300"
+                className={`transition-all duration-300 rounded-full ${
+                  currentTestimonial === i
+                    ? "w-10 h-2 bg-purple-600"
+                    : "w-2 h-2 bg-purple-300 hover:bg-purple-400"
                 }`}
               />
             ))}
@@ -175,15 +293,15 @@ export default function HomePage() {
       {/* Stats Section */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-16">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 text-center text-white">
-          <div className="animate-float">
+          <div>
             <div className="text-4xl font-bold">100+</div>
             <div className="opacity-90">Icônes</div>
           </div>
-          <div className="animate-float-delay">
+          <div>
             <div className="text-4xl font-bold">40+</div>
             <div className="opacity-90">Formulaires</div>
           </div>
-          <div className="animate-float-delay-2">
+          <div>
             <div className="text-4xl font-bold">50+</div>
             <div className="opacity-90">Sections</div>
           </div>
@@ -192,8 +310,8 @@ export default function HomePage() {
 
       {/* CTA Section finale */}
       <div className="py-20 text-center">
-        <h2 className="text-3xl font-bold mb-4 animate-fade-in-up">Prêt à créer votre design system ?</h2>
-        <p className="text-gray-600 mb-8 animate-fade-in-up">Commencez gratuitement, évoluez au besoin</p>
+        <h2 className="text-3xl font-bold mb-4">Prêt à créer votre design system ?</h2>
+        <p className="text-gray-600 mb-8">Commencez gratuitement, évoluez au besoin</p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/builder" className="px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition transform hover:scale-105 duration-300">
             🎨 Lancer le ThemeBuilder
@@ -206,64 +324,19 @@ export default function HomePage() {
 
       <style jsx>{`
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in-up {
           animation: fadeInUp 0.8s ease-out forwards;
         }
-        .animate-slide-in {
-          animation: slideIn 0.8s ease-out forwards;
-        }
-        .animate-slide-in-delay {
-          animation: slideIn 0.8s ease-out 0.3s forwards;
+        .animate-fade-in-up-delay {
+          animation: fadeInUp 0.8s ease-out 0.3s forwards;
           opacity: 0;
         }
-        .animate-fade-in {
+        .animate-fade-in-up-delay-2 {
           animation: fadeInUp 0.8s ease-out 0.6s forwards;
           opacity: 0;
-        }
-        .animate-on-scroll {
-          opacity: 0;
-          animation: fadeInUp 0.8s ease-out forwards;
-          animation-timeline: view();
-          animation-range: entry 0% entry 50%;
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-        .animate-float-delay {
-          animation: float 3s ease-in-out 0.5s infinite;
-        }
-        .animate-float-delay-2 {
-          animation: float 3s ease-in-out 1s infinite;
-        }
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
         }
       `}</style>
     </div>
