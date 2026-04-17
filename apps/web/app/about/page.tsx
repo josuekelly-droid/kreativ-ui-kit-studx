@@ -14,7 +14,7 @@ export default function AboutPage() {
   ];
 
   const team = [
-    { name: "Kelly Josué AKPLOGAN", role: "Fondateur & Designer", avatar: "👨‍🎨", bio: "Designer passionné par les interfaces et l'expérience utilisateur." },
+    { name: "Kelly Josué AKPLOGAN", role: "Fondateur - Designer - Développeur", avatar: "👨‍🎨", bio: "Designer passionné par les interfaces et l'expérience utilisateur." },
   ];
 
   const technologies = ["Next.js 16", "TypeScript", "Tailwind CSS", "PostgreSQL (Neon)", "Clerk (Auth)", "PayPal", "Groq (IA)", "Prisma"];
