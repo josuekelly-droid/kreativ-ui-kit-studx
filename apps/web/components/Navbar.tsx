@@ -13,9 +13,8 @@ export default function Navbar() {
     { href: "/builder", label: "Builder" },
     { href: "/pricing", label: "Tarifs" },
     { href: "/docs", label: "Docs" },
-     { href: "/blog", label: "Blog" },
-      { href: "/api-docs", label: "API" },
-
+    { href: "/blog", label: "Blog" },
+    { href: "/api-docs", label: "API" },
     { href: "/dashboard", label: "Dashboard" },
   ];
 

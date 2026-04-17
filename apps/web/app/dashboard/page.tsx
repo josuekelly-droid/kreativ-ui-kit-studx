@@ -1,3 +1,190 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { useUser } from "@clerk/nextjs";
+// import Link from "next/link";
+// import AIGenerator from '../../components/AIGenerator';
+
+// interface Theme {
+//   id: string;
+//   name: string;
+//   primaryColor: string;
+//   secondaryColor: string;
+//   createdAt: string;
+// }
+
+// export default function DashboardPage() {
+//   const { isSignedIn, user } = useUser();
+//   const [themes, setThemes] = useState<Theme[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isPremium, setIsPremium] = useState(false);
+
+//   useEffect(() => {
+//     if (isSignedIn) {
+//       fetchThemes();
+//       checkPremiumStatus();
+//     }
+//   }, [isSignedIn]);
+
+//   const fetchThemes = async () => {
+//     try {
+//       const res = await fetch("/api/themes");
+//       if (res.ok) {
+//         const data = await res.json();
+//         setThemes(data);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const checkPremiumStatus = async () => {
+//     try {
+//       const res = await fetch("/api/user/premium");
+//       if (res.ok) {
+//         const data = await res.json();
+//         setIsPremium(data.isPremium);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   const loadTheme = async (themeId: string) => {
+//     try {
+//       const res = await fetch(`/api/themes/${themeId}`);
+//       if (res.ok) {
+//         const theme = await res.json();
+//         localStorage.setItem("kreativ-theme", JSON.stringify(theme));
+//         window.location.href = "/builder";
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   const deleteTheme = async (themeId: string) => {
+//     if (!confirm("Supprimer ce thème définitivement ?")) return;
+//     try {
+//       const res = await fetch(`/api/themes/${themeId}`, { method: "DELETE" });
+//       if (res.ok) {
+//         setThemes(themes.filter((t) => t.id !== themeId));
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   if (!isSignedIn) {
+//     return (
+//       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+//         <h1 className="text-3xl font-bold mb-4">Tableau de bord</h1>
+//         <p className="mb-8 text-gray-600">Connectez-vous pour accéder à toutes les fonctionnalitées de Kreativ UI.</p>
+//         <Link href="/sign-in" className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+//           Se connecter
+//         </Link>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-12">
+//       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+//         <div>
+//           <h1 className="text-3xl font-bold">Tableau de bord</h1>
+//           <p className="text-gray-600">
+//             Bonjour, {user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Utilisateur"}
+//           </p>
+//         </div>
+//         <div className="flex gap-3 flex-wrap">
+//           {isPremium ? (
+//             <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full font-semibold text-sm">
+//               ⭐ Premium Actif
+//             </span>
+//           ) : (
+//             <Link href="/pricing" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm">
+//               ⭐ Passer Premium
+//             </Link>
+//           )}
+//           <Link href="/builder" className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition text-sm">
+//             + Nouveau thème
+//           </Link>
+//         </div>
+//       </div>
+
+//       <div className="grid lg:grid-cols-3 gap-8">
+//         {/* Liste des thèmes */}
+//         <div className="lg:col-span-2">
+//           <h2 className="text-xl font-semibold mb-4">Mes thèmes sauvegardés</h2>
+//           {loading ? (
+//             <div className="text-center py-12 bg-gray-50 rounded-xl">
+//               <p className="text-gray-500">Chargement...</p>
+//             </div>
+//           ) : themes.length === 0 ? (
+//             <div className="text-center py-12 bg-gray-50 rounded-xl">
+//               <p className="text-gray-500 mb-4">Aucun thème sauvegardé</p>
+//               <Link href="/builder" className="text-purple-600 hover:underline">
+//                 Créer mon premier thème →
+//               </Link>
+//             </div>
+//           ) : (
+//             <div className="space-y-3">
+//               {themes.map((theme) => (
+//                 <div key={theme.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition">
+//                   <div>
+//                     <h3 className="font-semibold">{theme.name}</h3>
+//                     <div className="flex items-center gap-2 mt-1">
+//                       <span className="w-4 h-4 rounded-full" style={{ backgroundColor: theme.primaryColor }}></span>
+//                       <span className="text-xs text-gray-500">{new Date(theme.createdAt).toLocaleDateString()}</span>
+//                     </div>
+//                   </div>
+//                   <div className="flex gap-2">
+//                     <button onClick={() => loadTheme(theme.id)} className="px-3 py-1 text-sm bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition">
+//                       Charger
+//                     </button>
+//                     <button onClick={() => deleteTheme(theme.id)} className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition">
+//                       Supprimer
+//                     </button>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Sidebar */}
+//         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
+//           <h2 className="text-xl font-semibold mb-4">📊 Aperçu</h2>
+//           <div className="space-y-4">
+//             <div>
+//               <p className="text-gray-600 text-sm">Thèmes sauvegardés</p>
+//               <p className="text-3xl font-bold text-purple-600">{themes.length}</p>
+//             </div>
+//             <div className="border-t pt-4">
+//               <p className="text-gray-600 text-sm">Statut</p>
+//               {isPremium ? (
+//                 <p className="text-green-600 font-semibold">✅ Premium – Accès complet</p>
+//               ) : (
+//                 <div>
+//                   <p className="text-gray-600">⚠️ Compte gratuit</p>
+//                   <Link href="/pricing" className="text-sm text-purple-600 hover:underline">
+//                     Débloquer tous les téléchargements →
+//                   </Link>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <AIGenerator />
+//     </div>
+//   );
+// }
+
+
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,16 +200,28 @@ interface Theme {
   createdAt: string;
 }
 
+interface UserStats {
+  totalThemes: number;
+  aiGenerationsUsed: number;
+  aiGenerationsLimit: number;
+}
+
 export default function DashboardPage() {
   const { isSignedIn, user } = useUser();
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [stats, setStats] = useState<UserStats>({
+    totalThemes: 0,
+    aiGenerationsUsed: 0,
+    aiGenerationsLimit: 10,
+  });
 
   useEffect(() => {
     if (isSignedIn) {
       fetchThemes();
       checkPremiumStatus();
+      fetchUserStats();
     }
   }, [isSignedIn]);
 
@@ -32,6 +231,7 @@ export default function DashboardPage() {
       if (res.ok) {
         const data = await res.json();
         setThemes(data);
+        setStats(prev => ({ ...prev, totalThemes: data.length }));
       }
     } catch (error) {
       console.error(error);
@@ -46,6 +246,25 @@ export default function DashboardPage() {
       if (res.ok) {
         const data = await res.json();
         setIsPremium(data.isPremium);
+        setStats(prev => ({
+          ...prev,
+          aiGenerationsLimit: data.isPremium ? -1 : 10,
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchUserStats = async () => {
+    try {
+      const res = await fetch("/api/user/stats");
+      if (res.ok) {
+        const data = await res.json();
+        setStats(prev => ({
+          ...prev,
+          aiGenerationsUsed: data.aiGenerationsUsed || 0,
+        }));
       }
     } catch (error) {
       console.error(error);
@@ -71,6 +290,7 @@ export default function DashboardPage() {
       const res = await fetch(`/api/themes/${themeId}`, { method: "DELETE" });
       if (res.ok) {
         setThemes(themes.filter((t) => t.id !== themeId));
+        setStats(prev => ({ ...prev, totalThemes: prev.totalThemes - 1 }));
       }
     } catch (error) {
       console.error(error);
@@ -81,7 +301,7 @@ export default function DashboardPage() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="text-3xl font-bold mb-4">Tableau de bord</h1>
-        <p className="mb-8 text-gray-600">Connectez-vous pour accéder à vos thèmes sauvegardés.</p>
+        <p className="mb-8 text-gray-600">Connectez-vous pour accéder à toutes les fonctionnalités de Kreativ UI.</p>
         <Link href="/sign-in" className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
           Se connecter
         </Link>
@@ -89,96 +309,169 @@ export default function DashboardPage() {
     );
   }
 
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Tableau de bord</h1>
-          <p className="text-gray-600">
-            Bonjour, {user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Utilisateur"}
-          </p>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          {isPremium ? (
-            <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full font-semibold text-sm">
-              ⭐ Premium Actif
-            </span>
-          ) : (
-            <Link href="/pricing" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm">
-              ⭐ Passer Premium
-            </Link>
-          )}
-          <Link href="/builder" className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition text-sm">
-            + Nouveau thème
-          </Link>
-        </div>
-      </div>
+  const remainingGenerations = isPremium ? -1 : Math.max(0, stats.aiGenerationsLimit - stats.aiGenerationsUsed);
+  const progressPercent = isPremium ? 100 : (stats.aiGenerationsUsed / stats.aiGenerationsLimit) * 100;
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Liste des thèmes */}
-        <div className="lg:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Mes thèmes sauvegardés</h2>
-          {loading ? (
-            <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <p className="text-gray-500">Chargement...</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Bannière Premium pour les gratuits */}
+        {!isPremium && (
+          <div className="mb-8 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+              <h3 className="font-bold text-amber-800">⭐ Passez à Premium</h3>
+              <p className="text-amber-700 text-sm">Débloquez les téléchargements illimités, l'IA sans limite et toutes les sections</p>
             </div>
-          ) : themes.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <p className="text-gray-500 mb-4">Aucun thème sauvegardé</p>
-              <Link href="/builder" className="text-purple-600 hover:underline">
-                Créer mon premier thème →
+            <Link href="/pricing" className="px-5 py-2 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 transition whitespace-nowrap">
+              Voir les offres
+            </Link>
+          </div>
+        )}
+
+        {/* En-tête */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Tableau de bord</h1>
+            <p className="text-gray-500">
+              👋 Bonjour, {user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Utilisateur"}
+            </p>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            {isPremium ? (
+              <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full font-semibold text-sm shadow-md">
+                ⭐ Premium Actif
+              </span>
+            ) : (
+              <Link href="/pricing" className="px-4 py-2 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition text-sm shadow-md">
+                ⭐ Passer Premium
               </Link>
+            )}
+            <Link href="/builder" className="px-4 py-2 border-2 border-purple-600 text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition text-sm">
+              + Nouveau thème
+            </Link>
+          </div>
+        </div>
+
+        {/* Cartes de statistiques */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-purple-100">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl">🎨</span>
+              <h3 className="font-semibold text-gray-600">Thèmes créés</h3>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {themes.map((theme) => (
-                <div key={theme.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition">
-                  <div>
-                    <h3 className="font-semibold">{theme.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="w-4 h-4 rounded-full" style={{ backgroundColor: theme.primaryColor }}></span>
-                      <span className="text-xs text-gray-500">{new Date(theme.createdAt).toLocaleDateString()}</span>
+            <p className="text-4xl font-bold text-purple-600">{stats.totalThemes}</p>
+            <p className="text-sm text-gray-500 mt-1">Total de vos thèmes sauvegardés</p>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-purple-100">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl">🤖</span>
+              <h3 className="font-semibold text-gray-600">Générations IA</h3>
+            </div>
+            {isPremium ? (
+              <>
+                <p className="text-4xl font-bold text-green-600">Illimité</p>
+                <p className="text-sm text-green-600 mt-1">✅ Premium actif</p>
+              </>
+            ) : (
+              <>
+                <p className="text-4xl font-bold text-purple-600">{stats.aiGenerationsUsed} / {stats.aiGenerationsLimit}</p>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="bg-purple-600 h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">{remainingGenerations} générations restantes aujourd'hui</p>
+              </>
+            )}
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-purple-100">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl">📦</span>
+              <h3 className="font-semibold text-gray-600">Téléchargements</h3>
+            </div>
+            {isPremium ? (
+              <p className="text-4xl font-bold text-green-600">Illimité</p>
+            ) : (
+              <div className="text-center py-2">
+                <p className="text-gray-500 text-sm mb-2">⛔ Bloqué</p>
+                <Link href="/pricing" className="text-purple-600 text-sm font-semibold hover:underline">Débloquer avec Premium →</Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Section principale */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Liste des thèmes */}
+          <div className="lg:col-span-2">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">📁 Mes thèmes sauvegardés</h2>
+            {loading ? (
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+                <p className="text-gray-500">Chargement...</p>
+              </div>
+            ) : themes.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+                <p className="text-gray-500 mb-4">Aucun thème sauvegardé</p>
+                <Link href="/builder" className="text-purple-600 font-semibold hover:underline">
+                  ✨ Créer mon premier thème
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {themes.map((theme) => (
+                  <div key={theme.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">{theme.name}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: theme.primaryColor }}></div>
+                        <span className="text-xs text-gray-400">{new Date(theme.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => loadTheme(theme.id)} className="px-3 py-1.5 text-sm bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition font-medium">
+                        Charger
+                      </button>
+                      <button onClick={() => deleteTheme(theme.id)} className="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition font-medium">
+                        Supprimer
+                      </button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => loadTheme(theme.id)} className="px-3 py-1 text-sm bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition">
-                      Charger
-                    </button>
-                    <button onClick={() => deleteTheme(theme.id)} className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition">
-                      Supprimer
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* Sidebar */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">📊 Aperçu</h2>
-          <div className="space-y-4">
-            <div>
-              <p className="text-gray-600 text-sm">Thèmes sauvegardés</p>
-              <p className="text-3xl font-bold text-purple-600">{themes.length}</p>
-            </div>
-            <div className="border-t pt-4">
-              <p className="text-gray-600 text-sm">Statut</p>
+          {/* Sidebar */}
+          <div>
+            <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 text-white shadow-xl">
+              <h2 className="text-xl font-bold mb-3">💎 Kreativ Premium</h2>
               {isPremium ? (
-                <p className="text-green-600 font-semibold">✅ Premium – Accès complet</p>
+                <>
+                  <p className="text-white/90 text-sm mb-4">Merci de faire partie de l'aventure Premium !</p>
+                  <div className="bg-white/20 rounded-xl p-3">
+                    <p className="text-sm">✅ Téléchargements illimités</p>
+                    <p className="text-sm">✅ IA sans limite</p>
+                    <p className="text-sm">✅ Support prioritaire</p>
+                  </div>
+                </>
               ) : (
-                <div>
-                  <p className="text-gray-600">⚠️ Compte gratuit</p>
-                  <Link href="/pricing" className="text-sm text-purple-600 hover:underline">
-                    Débloquer tous les téléchargements →
+                <>
+                  <p className="text-white/90 text-sm mb-4">Débloquez tout le potentiel de Kreativ UI</p>
+                  <Link href="/pricing" className="block text-center py-2 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition">
+                    🚀 Passer Premium
                   </Link>
-                </div>
+                </>
               )}
+            </div>
+            <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <h3 className="font-bold mb-2">📈 Activité récente</h3>
+              <p className="text-gray-500 text-sm">Dernier thème : {themes.length > 0 ? themes[0].name : "Aucun"}</p>
+              <p className="text-gray-500 text-sm mt-1">Membre depuis : {new Date(user?.createdAt || Date.now()).toLocaleDateString()}</p>
             </div>
           </div>
         </div>
+
+        {/* Assistant IA */}
+        <AIGenerator />
       </div>
-      <AIGenerator />
     </div>
   );
 }
