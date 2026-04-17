@@ -69,6 +69,21 @@ export async function POST(req: NextRequest) {
 
     const generatedCode = response.choices[0]?.message?.content || "";
 
+    // === NOUVEAU : Enregistrer la génération dans l'historique ===
+    try {
+      await prisma.aIGeneration.create({
+        data: {
+          userId,
+          prompt,
+          code: generatedCode,
+          type,
+        },
+      });
+    } catch (historyError) {
+      console.error("Erreur lors de l'enregistrement de l'historique IA:", historyError);
+      // Ne pas bloquer la réponse si l'historique échoue
+    }
+
     // Incrémenter le compteur
     const updatedUser = await prisma.user.update({
       where: { id: userId },

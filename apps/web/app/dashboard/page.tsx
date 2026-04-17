@@ -30,6 +30,14 @@ interface Download {
   createdAt: string;
 }
 
+interface AIGenerationItem {
+  id: string;
+  prompt: string;
+  code: string;
+  type: string;
+  createdAt: string;
+}
+
 interface UserStats {
   totalThemes: number;
   aiGenerationsUsed: number;
@@ -40,8 +48,10 @@ export default function DashboardPage() {
   const { isSignedIn, user } = useUser();
   const [themes, setThemes] = useState<Theme[]>([]);
   const [downloads, setDownloads] = useState<Download[]>([]);
+  const [aiHistory, setAiHistory] = useState<AIGenerationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloadsLoading, setDownloadsLoading] = useState(true);
+  const [aiHistoryLoading, setAiHistoryLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [stats, setStats] = useState<UserStats>({
@@ -55,6 +65,7 @@ export default function DashboardPage() {
       fetchThemes();
       checkPremiumStatus();
       fetchUserStats();
+      fetchAiHistory();
     }
   }, [isSignedIn]);
 
@@ -136,6 +147,20 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchAiHistory = async () => {
+    try {
+      const res = await fetch("/api/ai/history");
+      if (res.ok) {
+        const data = await res.json();
+        setAiHistory(data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setAiHistoryLoading(false);
+    }
+  };
+
   const loadTheme = async (themeId: string) => {
     try {
       const res = await fetch(`/api/themes/${themeId}`);
@@ -173,6 +198,7 @@ export default function DashboardPage() {
       },
       themes: themes.map(t => ({ name: t.name, createdAt: t.createdAt, colors: { primary: t.primaryColor, secondary: t.secondaryColor } })),
       downloads: downloads.map(d => ({ type: d.type, name: d.name, format: d.format, createdAt: d.createdAt })),
+      aiHistory: aiHistory.map(h => ({ prompt: h.prompt, type: h.type, createdAt: h.createdAt })),
       exportedAt: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
@@ -446,6 +472,55 @@ export default function DashboardPage() {
             )}
           </div>
         )}
+
+        {/* Section Historique IA */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">🤖 Historique des générations IA</h2>
+          {aiHistoryLoading ? (
+            <div className="text-center py-8 bg-white rounded-xl shadow-sm">
+              <p className="text-gray-500">Chargement...</p>
+            </div>
+          ) : aiHistory.length === 0 ? (
+            <div className="text-center py-8 bg-white rounded-xl shadow-sm">
+              <p className="text-gray-500 mb-4">Aucune génération IA pour le moment.</p>
+              <Link href="/builder" className="text-purple-600 text-sm hover:underline">
+                Essayer l'assistant IA →
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {aiHistory.map((item) => (
+                <div key={item.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-semibold text-purple-600">
+                          {item.type === 'component' ? '🧩 Composant' : '🏗️ Section'}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(item.createdAt).toLocaleDateString()} à {new Date(item.createdAt).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{item.prompt}</p>
+                      <details className="mt-2">
+                        <summary className="text-xs text-purple-600 cursor-pointer hover:underline">Voir le code généré</summary>
+                        <pre className="mt-2 p-2 bg-gray-900 text-green-400 rounded-lg text-xs overflow-auto max-h-48">
+                          <code>{item.code.substring(0, 500)}{item.code.length > 500 ? '...' : ''}</code>
+                        </pre>
+                      </details>
+                    </div>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(item.code)}
+                      className="ml-2 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded transition"
+                    >
+                      📋 Copier
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Assistant IA */}
         <AIGenerator />

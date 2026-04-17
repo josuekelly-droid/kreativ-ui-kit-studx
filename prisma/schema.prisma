@@ -60,3 +60,12 @@ model Download {
   format    String   // 'html', 'react', 'tailwind'
   createdAt DateTime @default(now())
 }
+
+model AIGeneration {
+  id        String   @id @default(cuid())
+  userId    String
+  prompt    String   @db.Text
+  code      String   @db.Text
+  type      String   // 'component' ou 'section'
+  createdAt DateTime @default(now())
+}
