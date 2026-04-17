@@ -22,6 +22,14 @@ interface Theme {
   createdAt: string;
 }
 
+interface Download {
+  id: string;
+  type: string;
+  name: string;
+  format: string;
+  createdAt: string;
+}
+
 interface UserStats {
   totalThemes: number;
   aiGenerationsUsed: number;
@@ -31,7 +39,9 @@ interface UserStats {
 export default function DashboardPage() {
   const { isSignedIn, user } = useUser();
   const [themes, setThemes] = useState<Theme[]>([]);
+  const [downloads, setDownloads] = useState<Download[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadsLoading, setDownloadsLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [stats, setStats] = useState<UserStats>({
@@ -47,6 +57,15 @@ export default function DashboardPage() {
       fetchUserStats();
     }
   }, [isSignedIn]);
+
+  // Charger les téléchargements uniquement si premium
+  useEffect(() => {
+    if (isSignedIn && isPremium) {
+      fetchDownloads();
+    } else {
+      setDownloadsLoading(false);
+    }
+  }, [isSignedIn, isPremium]);
 
   // Notification quand il reste peu de générations
   useEffect(() => {
@@ -103,6 +122,20 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchDownloads = async () => {
+    try {
+      const res = await fetch("/api/downloads");
+      if (res.ok) {
+        const data = await res.json();
+        setDownloads(data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDownloadsLoading(false);
+    }
+  };
+
   const loadTheme = async (themeId: string) => {
     try {
       const res = await fetch(`/api/themes/${themeId}`);
@@ -139,6 +172,7 @@ export default function DashboardPage() {
         aiGenerationsLimit: stats.aiGenerationsLimit,
       },
       themes: themes.map(t => ({ name: t.name, createdAt: t.createdAt, colors: { primary: t.primaryColor, secondary: t.secondaryColor } })),
+      downloads: downloads.map(d => ({ type: d.type, name: d.name, format: d.format, createdAt: d.createdAt })),
       exportedAt: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
@@ -150,7 +184,7 @@ export default function DashboardPage() {
     URL.revokeObjectURL(url);
   };
 
-  // Données pour le graphique (simulées pour l'instant)
+  // Données pour le graphique
   const chartData = [
     { month: "Jan", themes: 0 },
     { month: "Fév", themes: 0 },
@@ -160,7 +194,6 @@ export default function DashboardPage() {
     { month: "Juin", themes: 0 },
   ];
 
-  // Remplir avec les vraies données des thèmes
   themes.forEach(theme => {
     const month = new Date(theme.createdAt).getMonth();
     if (chartData[month]) chartData[month].themes += 1;
@@ -180,6 +213,16 @@ export default function DashboardPage() {
 
   const remainingGenerations = isPremium ? -1 : Math.max(0, stats.aiGenerationsLimit - stats.aiGenerationsUsed);
   const progressPercent = isPremium ? 100 : (stats.aiGenerationsUsed / stats.aiGenerationsLimit) * 100;
+
+  const getTypeIcon = (type: string) => {
+    switch(type) {
+      case 'component': return '🧩';
+      case 'icon': return '🎨';
+      case 'form': return '📝';
+      case 'section': return '🏗️';
+      default: return '📄';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
@@ -363,6 +406,46 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Section Téléchargements (Premium uniquement) */}
+        {isPremium && (
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">📥 Mes téléchargements</h2>
+            {downloadsLoading ? (
+              <div className="text-center py-8 bg-white rounded-xl shadow-sm">
+                <p className="text-gray-500">Chargement...</p>
+              </div>
+            ) : downloads.length === 0 ? (
+              <div className="text-center py-8 bg-white rounded-xl shadow-sm">
+                <p className="text-gray-500 mb-4">Aucun téléchargement pour le moment.</p>
+                <Link href="/builder" className="text-purple-600 text-sm hover:underline">
+                  Commencer à télécharger →
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {downloads.map((dl) => (
+                  <div key={dl.id} className="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-800">
+                          {getTypeIcon(dl.type)} {dl.name}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                          {dl.format.toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(dl.createdAt).toLocaleDateString()} à {new Date(dl.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <span className="text-green-600 text-sm">✅ Téléchargé</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Assistant IA */}
         <AIGenerator />
