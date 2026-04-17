@@ -483,8 +483,8 @@ export default function DashboardPage() {
           ) : aiHistory.length === 0 ? (
             <div className="text-center py-8 bg-white rounded-xl shadow-sm">
               <p className="text-gray-500 mb-4">Aucune génération IA pour le moment.</p>
-              <Link href="/builder" className="text-purple-600 text-sm hover:underline">
-                Essayer l'assistant IA →
+              <Link href="/about" className="text-purple-600 text-sm hover:underline">
+                En savoir plus sur Kreativ UI →
               </Link>
             </div>
           ) : (
