@@ -51,3 +51,12 @@ model ContactMessage {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model Download {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // 'component', 'icon', 'form', 'section'
+  name      String
+  format    String   // 'html', 'react', 'tailwind'
+  createdAt DateTime @default(now())
+}
