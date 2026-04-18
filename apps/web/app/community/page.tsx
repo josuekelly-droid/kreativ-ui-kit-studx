@@ -135,6 +135,46 @@ export default function CommunityPage() {
     }
   };
 
+  // Modifier un post
+  const handleEditPost = async (post: Post) => {
+    const newTitle = prompt("Nouveau titre", post.title);
+    const newContent = prompt("Nouveau contenu", post.content);
+    if (newTitle && newContent) {
+      try {
+        const res = await fetch(`/api/community/posts/${post.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: newTitle, content: newContent, type: post.type }),
+        });
+        if (res.ok) {
+          fetchPosts();
+        } else {
+          alert("Erreur lors de la modification");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // Supprimer un post
+  const handleDeletePost = async (postId: string) => {
+    if (confirm("Supprimer définitivement cette publication ?")) {
+      try {
+        const res = await fetch(`/api/community/posts/${postId}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          fetchPosts();
+        } else {
+          alert("Erreur lors de la suppression");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const getTypeIcon = (type: string) => {
     switch(type) {
       case 'share': return '📤';
@@ -278,7 +318,7 @@ export default function CommunityPage() {
             {posts.map((post) => (
               <div key={post.id} className="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div className="p-6">
-                  {/* En-tête avec badge Premium */}
+                  {/* En-tête avec badge Premium et boutons Modifier/Supprimer */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">{getTypeIcon(post.type)}</span>
@@ -297,6 +337,25 @@ export default function CommunityPage() {
                         <span className="px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full">
                           ⭐ Premium
                         </span>
+                      )}
+                      {/* Boutons Modifier/Supprimer - uniquement pour l'auteur */}
+                      {isSignedIn && post.userId === user?.id && (
+                        <div className="flex gap-1 ml-2">
+                          <button
+                            onClick={() => handleEditPost(post)}
+                            className="text-xs text-blue-500 hover:text-blue-700 transition px-1"
+                            title="Modifier"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="text-xs text-red-500 hover:text-red-700 transition px-1"
+                            title="Supprimer"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

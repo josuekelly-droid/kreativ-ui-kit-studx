@@ -73,6 +73,40 @@ export default function ThemeBuilder() {
   const { isSignedIn, user } = useUser();
   const { isPremium, loading: premiumLoading } = usePremium();
 
+  // Partager le thème dans la communauté
+const shareThemeToCommunity = async () => {
+  if (!isSignedIn) {
+    alert("Connectez-vous pour partager un thème");
+    return;
+  }
+
+  const title = prompt("Titre de votre publication", `Mon thème ${new Date().toLocaleDateString()}`);
+  if (!title) return;
+
+  const content = `🎨 **Thème personnalisé**\n\n• Couleur primaire : ${primaryColor}\n• Couleur secondaire : ${secondaryColor}\n• Border-radius : ${borderRadius}px\n• Mode sombre : ${darkMode ? "Activé" : "Désactivé"}\n• Espacement : ${spacing * 4}px\n• Taille police : ${fontSize}px\n\nCréé avec Kreativ UI Kit Pro ✨`;
+
+  try {
+    const res = await fetch("/api/community/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        content,
+        type: "share",
+      }),
+    });
+    if (res.ok) {
+      alert("✅ Thème partagé dans la communauté !");
+      window.open("/community", "_blank");
+    } else {
+      alert("❌ Erreur lors du partage");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Erreur réseau");
+  }
+};
+
   // ========== LISTES POUR RESTRICTIONS PREMIUM ==========
   const ALL_FORMS = [
     'login', 'register', 'contact', 'newsletter', 'feedback', 'checkout', 'search', 'appointment',
@@ -483,6 +517,12 @@ export default function ThemeBuilder() {
             <button onClick={saveTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>💾 Sauvegarder</button>
             <button onClick={loadTheme} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📂 Charger</button>
             <button onClick={() => setShowExportModal(true)} className="px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: 'white' }}>📤 Exporter le thème</button>
+            <button
+  onClick={shareThemeToCommunity}
+  className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition"
+>
+  🌍 Partager ce thème
+</button>
 
             {isSignedIn && (
               <>
