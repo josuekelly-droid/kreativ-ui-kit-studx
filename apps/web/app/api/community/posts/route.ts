@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -62,17 +62,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
     }
 
-    // Récupérer l'utilisateur existant ou en créer un
+    // Récupérer l'utilisateur courant avec ses infos complètes
+    const clerkUser = await currentUser();
+    const userName = clerkUser?.firstName || clerkUser?.emailAddresses[0]?.emailAddress.split("@")[0] || "Utilisateur";
+    const userEmail = clerkUser?.emailAddresses[0]?.emailAddress || `${userId}@clerk.com`;
+
+    // Créer ou mettre à jour l'utilisateur dans Prisma
     let user = await prisma.user.findUnique({ where: { id: userId } });
-    
     if (!user) {
-      // Créer un utilisateur avec l'ID comme nom temporaire
       user = await prisma.user.create({
         data: {
           id: userId,
-          email: `${userId}@clerk.com`,
-          name: userId.slice(0, 8), // Utilise les 8 premiers caractères de l'ID
+          email: userEmail,
+          name: userName,
         },
+      });
+    } else if (user.name !== userName && userName !== "Utilisateur") {
+      user = await prisma.user.update({
+        where: { id: userId },
+        data: { name: userName },
       });
     }
 
