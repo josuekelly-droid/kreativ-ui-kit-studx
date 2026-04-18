@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: {
+    name: string;
+    email: string;
+    isPremium?: boolean;
+  };
+}
+
 interface Post {
   id: string;
   title: string;
@@ -21,6 +32,7 @@ interface Post {
   };
   createdAt: string;
   likedByUser?: boolean;
+  comments: Comment[];
 }
 
 export default function CommunityPage() {
@@ -314,10 +326,31 @@ export default function CommunityPage() {
                   {/* Section commentaires */}
                   {expandedPostId === post.id && (
                     <div className="mt-4 pt-4 border-t">
-                      {/* Affichage des commentaires (à venir) */}
-                      <div className="text-sm text-gray-500 text-center mb-4">
-                        Les commentaires seront bientôt disponibles.
-                      </div>
+                      {/* Affichage des commentaires existants */}
+                      {post.comments && post.comments.length > 0 ? (
+                        <div className="space-y-3 mb-4">
+                          {post.comments.map((comment) => (
+                            <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs font-semibold text-purple-600">
+                                  👤 {comment.user?.name || comment.user?.email?.split("@")[0] || "Utilisateur"}
+                                  {comment.user?.isPremium && (
+                                    <span className="ml-1 text-xs text-yellow-500">⭐</span>
+                                  )}
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                  {new Date(comment.createdAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">{comment.content}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500 text-center mb-4">
+                          Aucun commentaire pour le moment. Soyez le premier à commenter !
+                        </div>
+                      )}
 
                       {/* Formulaire de commentaire - visible uniquement si connecté */}
                       {isSignedIn ? (

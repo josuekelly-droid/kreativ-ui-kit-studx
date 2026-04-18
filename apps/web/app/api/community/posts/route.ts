@@ -18,6 +18,14 @@ export async function GET(request: NextRequest) {
         user: {
           select: { name: true, email: true, isPremium: true },
         },
+        comments: {
+      include: {
+        user: {
+          select: { name: true, email: true, isPremium: true },
+        },
+      },
+      },
+
         _count: {
           select: { likes: true, comments: true },
         },
