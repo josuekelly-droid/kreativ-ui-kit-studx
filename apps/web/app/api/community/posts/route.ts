@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         user: {
-          select: { name: true, email: true },
+          select: { name: true, email: true, isPremium: true },
         },
         _count: {
           select: { likes: true, comments: true },
@@ -62,6 +62,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
     }
 
+    // Récupérer les informations utilisateur depuis Clerk
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const userName = clerkUser.firstName || clerkUser.emailAddresses[0]?.emailAddress?.split("@")[0] || "Utilisateur";
+    const userEmail = clerkUser.emailAddresses[0]?.emailAddress || `${userId}@clerk.com`;
+
+    // Créer ou mettre à jour l'utilisateur dans Prisma
+    let user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          id: userId,
+          email: userEmail,
+          name: userName,
+        },
+      });
+    } else if (user.name !== userName) {
+      user = await prisma.user.update({
+        where: { id: userId },
+        data: { name: userName },
+      });
+    }
+
     const post = await prisma.post.create({
       data: {
         title,
@@ -71,7 +93,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         user: {
-          select: { name: true, email: true },
+          select: { name: true, email: true, isPremium: true },
         },
       },
     });
