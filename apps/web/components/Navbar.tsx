@@ -23,7 +23,7 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: "Accueil" },
     { href: "/builder", label: "Builder" },
-    { href: "/pricing", label: "Tarifs" },
+    // { href: "/pricing", label: "Tarifs" },
     { href: "/docs", label: "Docs" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/community", label: "Communauté" },
