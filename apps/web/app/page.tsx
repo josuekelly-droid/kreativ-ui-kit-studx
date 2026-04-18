@@ -354,7 +354,7 @@ export default function HomePage() {
       </div>
 
       {/* Newsletter */}
-        <div className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
+        <div className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-2">📧 Restez informé</h2>
           <p className="text-white/90 mb-6">
             Recevez les dernières actualités et tutoriels directement dans votre boîte mail.
