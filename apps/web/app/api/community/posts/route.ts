@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET - Récupérer tous les posts (avec filtres)
+// GET - Récupérer tous les posts
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get("type");
@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Vérifier si l'utilisateur connecté a liké chaque post
     const { userId } = await auth();
     let likedPosts: string[] = [];
     if (userId) {
@@ -62,25 +61,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
     }
 
-    // Récupérer les informations utilisateur depuis Clerk
-    const clerkUser = await clerkClient.users.getUser(userId);
-    const userName = clerkUser.firstName || clerkUser.emailAddresses[0]?.emailAddress?.split("@")[0] || "Utilisateur";
-    const userEmail = clerkUser.emailAddresses[0]?.emailAddress || `${userId}@clerk.com`;
-
-    // Créer ou mettre à jour l'utilisateur dans Prisma
+    // Récupérer les informations utilisateur depuis Prisma (existant)
     let user = await prisma.user.findUnique({ where: { id: userId } });
+    
+    // Si l'utilisateur n'existe pas, on le crée avec un nom temporaire
+    // Le nom sera mis à jour quand l'utilisateur fera une action
     if (!user) {
       user = await prisma.user.create({
         data: {
           id: userId,
-          email: userEmail,
-          name: userName,
+          email: `${userId}@clerk.com`,
+          name: "Membre", // Temporaire, sera mis à jour
         },
-      });
-    } else if (user.name !== userName) {
-      user = await prisma.user.update({
-        where: { id: userId },
-        data: { name: userName },
       });
     }
 
