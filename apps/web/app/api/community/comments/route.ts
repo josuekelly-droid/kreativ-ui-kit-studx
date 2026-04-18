@@ -25,10 +25,35 @@ export async function POST(request: NextRequest) {
       },
       include: {
         user: {
-          select: { name: true, email: true },
+          select: { name: true, email: true, isPremium: true },
         },
       },
     });
+
+    // 🔔 Créer une notification pour l'auteur du post (sauf si c'est l'auteur lui-même)
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { userId: true, title: true },
+    });
+
+    if (post && post.userId !== userId) {
+      // Récupérer le nom de l'utilisateur qui commente
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true },
+      });
+      const userName = user?.name || "Quelqu'un";
+
+      await prisma.notification.create({
+        data: {
+          userId: post.userId,
+          type: "comment",
+          message: `💬 ${userName} a commenté votre publication "${post.title.substring(0, 50)}${post.title.length > 50 ? "..." : ""}"`,
+          link: `/community`,
+          read: false,
+        },
+      });
+    }
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {

@@ -46,6 +46,32 @@ export async function POST(request: NextRequest) {
           userId,
         },
       });
+
+      // 🔔 Créer une notification pour l'auteur du post
+      const post = await prisma.post.findUnique({
+        where: { id: postId },
+        select: { userId: true, title: true },
+      });
+
+      if (post && post.userId !== userId) {
+        // Récupérer le nom depuis l'utilisateur Prisma ou utiliser un fallback
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true },
+        });
+        const userName = user?.name || "Quelqu'un";
+
+        await prisma.notification.create({
+          data: {
+            userId: post.userId,
+            type: "like",
+            message: `❤️ ${userName} a aimé votre publication "${post.title.substring(0, 50)}${post.title.length > 50 ? "..." : ""}"`,
+            link: `/community`,
+            read: false,
+          },
+        });
+      }
+
       return NextResponse.json({ liked: true });
     }
   } catch (error) {

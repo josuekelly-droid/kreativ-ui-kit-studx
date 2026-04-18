@@ -107,3 +107,13 @@ model Like {
 
   @@unique([postId, userId])
 }
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // L'utilisateur qui reçoit la notification
+  type      String   // 'like', 'comment', 'reply'
+  message   String   // Message texte
+  read      Boolean  @default(false)  // Lu ou non lu
+  link      String   // Lien vers le post/commentaire concerné
+  createdAt DateTime @default(now())
+}
