@@ -13,6 +13,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/contact`, priority: 0.6, changeFrequency: 'monthly' as const },
     { url: `${baseUrl}/sign-in`, priority: 0.5, changeFrequency: 'yearly' as const },
     { url: `${baseUrl}/sign-up`, priority: 0.5, changeFrequency: 'yearly' as const },
+    { url: `${baseUrl}/support`, priority: 0.5, changeFrequency: 'yearly' as const },
+    { url: `${baseUrl}/api-docs`, priority: 0.5, changeFrequency: 'yearly' as const },
+    { url: `${baseUrl}/blog`, priority: 0.6, changeFrequency: 'yearly' as const },
+    { url: `${baseUrl}/community`, priority: 0.7, changeFrequency: 'yearly' as const },
   ];
 
   return routes;

@@ -58,7 +58,7 @@ export default function PrivacyPage() {
 
         <h2>7. Contact</h2>
         <p>
-          Pour toute question concernant cette politique : <strong>privacy@kreativ-ui.com</strong>
+          Pour toute question concernant cette politique : <strong>kelly.webnux@gmail.com</strong>
         </p>
       </div>
     </div>

@@ -53,7 +53,7 @@ export default function CookiesPage() {
 
         <h2>Contact</h2>
         <p>
-          Pour toute question concernant notre utilisation des cookies : <strong>privacy@kreativ-ui.com</strong>
+          Pour toute question concernant notre utilisation des cookies : <strong>kelly.webnux@gmail.com</strong>
         </p>
       </div>
     </div>

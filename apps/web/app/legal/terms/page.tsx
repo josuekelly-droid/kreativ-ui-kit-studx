@@ -49,7 +49,7 @@ export default function TermsPage() {
 
         <h2>8. Contact</h2>
         <p>
-          Pour toute question concernant ces conditions, contactez-nous à : <strong>legal@kreativ-ui.com</strong>
+          Pour toute question concernant ces conditions, contactez-nous à : <strong>kelly.webnux@gmail.com</strong>
         </p>
       </div>
     </div>

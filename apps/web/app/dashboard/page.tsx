@@ -229,7 +229,7 @@ export default function DashboardPage() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="text-3xl font-bold mb-4">Tableau de bord</h1>
-        <p className="mb-8 text-gray-600">Connectez-vous pour accéder à toutes les fonctionnalités de Kreativ UI.</p>
+        <p className="mb-8 text-gray-600">Connectez-vous pour accéder à toutes les fonctionnalités de Kreativ UI Kit.</p>
         <Link href="/sign-in" className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
           Se connecter
         </Link>

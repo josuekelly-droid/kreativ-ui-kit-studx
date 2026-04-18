@@ -95,7 +95,7 @@ export default function HomePage() {
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20 text-center text-white">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up">🎨 Kreativ UI Kit Pro</h1>
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up">🎨 Kreativ UI Kit</h1>
         <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto animate-fade-in-up-delay">
           Créez votre design system en temps réel. Personnalisez, exportez, et téléchargez vos composants.
         </p>

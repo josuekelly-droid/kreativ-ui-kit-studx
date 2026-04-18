@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Colonne 1 - Marque */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               <span className="text-2xl">🎨</span> Kreativ UI
             </h3>
             <p className="text-sm text-gray-600">
@@ -61,7 +61,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t mt-8 pt-8 text-center text-sm text-gray-500">
-          <p>© {currentYear} Kreativ UI Kit Pro. Tous droits réservés.</p>
+          <p>© {currentYear} Kreativ UI Kit. Tous droits réservés.</p>
           <p className="mt-2">
             Créé par{" "}
             <a 

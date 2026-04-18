@@ -49,7 +49,7 @@ export default function DocsPage() {
           Documentation
         </h1>
         <p className="text-lg text-gray-600">
-          Tout ce que vous devez savoir pour maîtriser Kreativ UI Kit Pro
+          Tout ce que vous devez savoir pour maîtriser Kreativ UI Kit
         </p>
       </div>
 
