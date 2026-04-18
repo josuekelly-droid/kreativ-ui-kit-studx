@@ -314,25 +314,39 @@ export default function CommunityPage() {
                   {/* Section commentaires */}
                   {expandedPostId === post.id && (
                     <div className="mt-4 pt-4 border-t">
-                      <div className="flex gap-2 mb-4">
-                        <input
-                          type="text"
-                          placeholder="Ajouter un commentaire..."
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          className="flex-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
-                        />
-                        <button
-                          onClick={() => handleAddComment(post.id)}
-                          disabled={submittingComment}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50"
-                        >
-                          {submittingComment ? "..." : "Envoyer"}
-                        </button>
-                      </div>
-                      <div className="text-sm text-gray-500 text-center">
+                      {/* Affichage des commentaires (à venir) */}
+                      <div className="text-sm text-gray-500 text-center mb-4">
                         Les commentaires seront bientôt disponibles.
                       </div>
+
+                      {/* Formulaire de commentaire - visible uniquement si connecté */}
+                      {isSignedIn ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Ajouter un commentaire..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            className="flex-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                          />
+                          <button
+                            onClick={() => handleAddComment(post.id)}
+                            disabled={submittingComment}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+                          >
+                            {submittingComment ? "..." : "Envoyer"}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-center py-3 bg-gray-50 rounded-lg">
+                          <p className="text-sm text-gray-500">
+                            <Link href="/sign-in" className="text-purple-600 hover:underline">
+                              Connectez-vous
+                            </Link>{" "}
+                            pour commenter
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
