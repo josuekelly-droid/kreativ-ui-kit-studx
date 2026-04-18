@@ -6,8 +6,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Kreativ UI Kit Pro | Générateur de design system',
-    template: '%s | Kreativ UI Kit Pro'
+    default: 'Kreativ UI Kit | Générateur de design system',
+    template: '%s | Kreativ UI Kit'
   },
   description: 'Créez, personnalisez et exportez votre design system en temps réel. 100+ icônes, 40+ formulaires, 50+ sections. Téléchargement HTML, React et Tailwind.',
   keywords: [
@@ -29,16 +29,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Kreativ UI Kit Pro | Générateur de design system',
+    title: 'Kreativ UI Kit | Générateur de design system',
     description: 'Créez, personnalisez et exportez votre design system en temps réel. 100+ icônes, 40+ formulaires, 50+ sections.',
     url: 'https://kreativ-ui-kit-studx.vercel.app',
-    siteName: 'Kreativ UI Kit Pro',
+    siteName: 'Kreativ UI Kit',
     images: [
       {
         url: 'https://kreativ-ui-kit-studx.vercel.app/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Kreativ UI Kit Pro - Générateur de design system',
+        alt: 'Kreativ UI Kit - Générateur de design system',
       },
     ],
     locale: 'fr_FR',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kreativ UI Kit Pro | Générateur de design system',
+    title: 'Kreativ UI Kit | Générateur de design system',
     description: 'Créez, personnalisez et exportez votre design system en temps réel.',
     images: ['https://kreativ-ui-kit-studx.vercel.app/og-image.png'],
     creator: '@kreativui',
