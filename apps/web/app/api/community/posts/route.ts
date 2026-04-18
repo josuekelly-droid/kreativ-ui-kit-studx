@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
 // POST - Créer un nouveau post
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
+  
   if (!userId) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
@@ -61,17 +62,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
     }
 
-    // Récupérer les informations utilisateur depuis Prisma (existant)
+    // Récupérer l'utilisateur existant ou en créer un
     let user = await prisma.user.findUnique({ where: { id: userId } });
     
-    // Si l'utilisateur n'existe pas, on le crée avec un nom temporaire
-    // Le nom sera mis à jour quand l'utilisateur fera une action
     if (!user) {
+      // Créer un utilisateur avec l'ID comme nom temporaire
       user = await prisma.user.create({
         data: {
           id: userId,
           email: `${userId}@clerk.com`,
-          name: "Membre", // Temporaire, sera mis à jour
+          name: userId.slice(0, 8), // Utilise les 8 premiers caractères de l'ID
         },
       });
     }
