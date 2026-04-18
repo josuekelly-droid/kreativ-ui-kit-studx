@@ -13,6 +13,7 @@ interface Post {
   user: {
     name: string;
     email: string;
+    isPremium?: boolean;
   };
   _count: {
     likes: number;
@@ -265,7 +266,7 @@ export default function CommunityPage() {
             {posts.map((post) => (
               <div key={post.id} className="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div className="p-6">
-                  {/* En-tête */}
+                  {/* En-tête avec badge Premium */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">{getTypeIcon(post.type)}</span>
@@ -276,9 +277,16 @@ export default function CommunityPage() {
                         • {new Date(post.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <span className="text-sm text-gray-500">
-                      👤 {post.user?.name || post.user?.email?.split("@")[0] || "Utilisateur"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">
+                        👤 {post.user?.name || post.user?.email?.split("@")[0] || "Utilisateur"}
+                      </span>
+                      {post.user?.isPremium && (
+                        <span className="px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full">
+                          ⭐ Premium
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Titre et contenu */}
