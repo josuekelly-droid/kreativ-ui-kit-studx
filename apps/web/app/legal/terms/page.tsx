@@ -37,7 +37,7 @@ export default function TermsPage() {
 
         <h2>6. Limitations de responsabilité</h2>
         <p>
-          Kreativ UI ne pourra être tenu responsable des dommages indirects ou pertes de données résultant de l'utilisation
+          Kreativ UI Kit ne pourra être tenu responsable des dommages indirects ou pertes de données résultant de l'utilisation
           de notre service. Le service est fourni "en l'état".
         </p>
 

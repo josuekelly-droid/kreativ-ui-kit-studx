@@ -23,7 +23,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-purple-700 to-pink-600 py-20 text-center text-white">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4">À propos de Kreativ UI</h1>
+        <h1 className="text-5xl md:text-6xl font-bold mb-4">À propos de Kreativ UI Kit</h1>
         <p className="text-xl text-white/80 max-w-2xl mx-auto">
           Nous croyons que la création d'interfaces ne devrait jamais être une contrainte.
         </p>
@@ -51,7 +51,7 @@ export default function AboutPage() {
 
         {/* Pourquoi Kreativ UI */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Pourquoi Kreativ UI ?</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Pourquoi Kreativ UI Kit ?</h2>
           <p className="text-center text-gray-600 mb-10">Une solution complète pour les créateurs modernes</p>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl p-6 shadow-md">
