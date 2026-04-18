@@ -9,6 +9,9 @@ export default function HomePage() {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState("");
+
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const testimonials = [
     { 
@@ -90,6 +93,34 @@ export default function HomePage() {
   const handleMouseUp = () => {
     setIsDragging(false);
   };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!email) return;
+
+  setNewsletterStatus("loading");
+  try {
+    const response = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    
+    if (response.ok) {
+      setNewsletterStatus("success");
+      setEmail("");
+      setTimeout(() => setNewsletterStatus("idle"), 3000);
+    } else {
+      alert(data.error || "Erreur lors de l'inscription");
+      setNewsletterStatus("idle");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Erreur réseau");
+    setNewsletterStatus("idle");
+  }
+};
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -308,6 +339,37 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Newsletter */}
+        <div className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
+          <h2 className="text-2xl font-bold mb-2">📧 Restez informé</h2>
+          <p className="text-white/90 mb-6">
+            Recevez les dernières actualités et tutoriels directement dans votre boîte mail.
+          </p>
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Votre adresse email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="flex-1 px-4 py-3 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button
+              type="submit"
+              disabled={newsletterStatus === "loading"}
+              className="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50"
+            >
+              {newsletterStatus === "loading" ? "..." : "S'abonner"}
+            </button>
+          </form>
+          {newsletterStatus === "success" && (
+            <p className="text-green-200 mt-3 text-sm">✅ Merci pour votre inscription !</p>
+          )}
+          {newsletterStatus === "error" && (
+            <p className="text-red-200 mt-3 text-sm">❌ Erreur, réessayez.</p>
+          )}
+        </div>
+      
       {/* CTA Section finale */}
       <div className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-4">Prêt à créer votre design system ?</h2>
