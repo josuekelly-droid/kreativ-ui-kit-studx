@@ -14,7 +14,7 @@ export default function ApiDocsPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <div className="bg-gradient-to-r from-purple-700 to-pink-600 py-16 text-center text-white">
         <h1 className="text-5xl font-bold mb-4">API Documentation</h1>
-        <p className="text-xl text-white/80 max-w-2xl mx-auto">Intégrez Kreativ UI dans vos propres applications</p>
+        <p className="text-xl text-white/80 max-w-2xl mx-auto">Intégrez Kreativ UI Kit dans vos propres applications</p>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-12">

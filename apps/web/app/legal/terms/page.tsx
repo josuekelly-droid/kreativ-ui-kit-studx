@@ -7,13 +7,13 @@ export default function TermsPage() {
       <div className="prose prose-lg max-w-none">
         <h2>1. Acceptation des conditions</h2>
         <p>
-          En accédant et en utilisant Kreativ UI Kit Pro, vous acceptez d'être lié par ces conditions d'utilisation.
+          En accédant et en utilisant Kreativ UI Kit, vous acceptez d'être lié par ces conditions d'utilisation.
           Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
         </p>
 
         <h2>2. Description du service</h2>
         <p>
-          Kreativ UI Kit Pro est un générateur de design system permettant de personnaliser, sauvegarder et exporter
+          Kreativ UI Kit est un générateur de design system permettant de personnaliser, sauvegarder et exporter
           des thèmes, icônes, formulaires et sections pour vos projets web.
         </p>
 
@@ -32,7 +32,7 @@ export default function TermsPage() {
         <h2>5. Propriété intellectuelle</h2>
         <p>
           Le code généré par l'outil vous appartient. En revanche, l'outil lui-même, son code source, son design et sa marque
-          sont la propriété exclusive de Kreativ UI.
+          sont la propriété exclusive de Kreativ UI Kit.
         </p>
 
         <h2>6. Limitations de responsabilité</h2>

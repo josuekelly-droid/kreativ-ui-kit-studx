@@ -12,7 +12,7 @@ export default function Footer() {
           {/* Colonne 1 - Marque */}
           <div>
             <h3 className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              <span className="text-2xl">🎨</span> Kreativ UI
+              <span className="text-2xl">🎨</span> Kreativ UI Kit
             </h3>
             <p className="text-sm text-gray-600">
               Le générateur de design system ultime pour designers et développeurs.
