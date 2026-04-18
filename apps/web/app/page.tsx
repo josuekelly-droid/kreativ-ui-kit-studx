@@ -338,6 +338,20 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      
+      {/* CTA Section finale */}
+      <div className="py-20 text-center">
+        <h2 className="text-3xl font-bold mb-4">Prêt à créer votre design system ?</h2>
+        <p className="text-gray-600 mb-8">Commencez gratuitement, évoluez au besoin</p>
+        <div className="flex gap-4 justify-center flex-wrap">
+          <Link href="/builder" className="px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition transform hover:scale-105 duration-300">
+            🎨 Lancer le ThemeBuilder
+          </Link>
+          <Link href="/dashboard" className="px-8 py-3 border-2 border-purple-600 text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition transform hover:scale-105 duration-300">
+            🤖 Tester l'IA
+          </Link>
+        </div>
+      </div>
 
       {/* Newsletter */}
         <div className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
@@ -369,20 +383,6 @@ export default function HomePage() {
             <p className="text-red-200 mt-3 text-sm">❌ Erreur, réessayez.</p>
           )}
         </div>
-      
-      {/* CTA Section finale */}
-      <div className="py-20 text-center">
-        <h2 className="text-3xl font-bold mb-4">Prêt à créer votre design system ?</h2>
-        <p className="text-gray-600 mb-8">Commencez gratuitement, évoluez au besoin</p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Link href="/builder" className="px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition transform hover:scale-105 duration-300">
-            🎨 Lancer le ThemeBuilder
-          </Link>
-          <Link href="/dashboard" className="px-8 py-3 border-2 border-purple-600 text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition transform hover:scale-105 duration-300">
-            🤖 Tester l'IA
-          </Link>
-        </div>
-      </div>
 
       <style jsx>{`
         @keyframes fadeInUp {
