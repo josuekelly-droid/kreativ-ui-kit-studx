@@ -80,10 +80,10 @@ const shareThemeToCommunity = async () => {
     return;
   }
 
-  const title = prompt("Titre de votre publication", `Mon thème ${new Date().toLocaleDateString()}`);
+  const title = prompt("Titre de votre publication", `Mon style, thème ${new Date().toLocaleDateString()}`);
   if (!title) return;
 
-  const content = `🎨 **Thème personnalisé**\n\n• Couleur primaire : ${primaryColor}\n• Couleur secondaire : ${secondaryColor}\n• Border-radius : ${borderRadius}px\n• Mode sombre : ${darkMode ? "Activé" : "Désactivé"}\n• Espacement : ${spacing * 4}px\n• Taille police : ${fontSize}px\n\nCréé avec Kreativ UI Kit Pro ✨`;
+  const content = `🎨 Thème personnalisé \n\n• Couleur primaire : ${primaryColor}\n• Couleur secondaire : ${secondaryColor}\n• Border-radius : ${borderRadius}px\n• Mode sombre : ${darkMode ? "Activé" : "Désactivé"}\n• Espacement : ${spacing * 4}px\n• Taille police : ${fontSize}px\n\nCréé avec Kreativ UI Kit ✨`;
 
   try {
     const res = await fetch("/api/community/posts", {
